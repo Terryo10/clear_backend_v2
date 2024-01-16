@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
@@ -49,26 +50,14 @@ class loginController extends Controller
                 return response()->json([
                     'status' => 200,
                     'username' => $user->lastname,
-                    'user_id' => $user->id,
-                    'role' => $user->role,
+                    'user' => $user,
                     'token' => $token,
-                    'message' => 'Logged IN Successfully ',
+                    'message' => 'Logged in Successfully ',
                 ]);
             }
         }
     }
 
-    public function deleteMyAccount(Request $request,$id)
-    {
-
-        $deletedMyAccount = User::where('id', $id)->delete();
-        \Auth::logout();
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Account Successfully deleted',
-        ]);
-    }
 
     public function logout(Request $request)
     {
