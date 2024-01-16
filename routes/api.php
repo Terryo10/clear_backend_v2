@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\loginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,9 @@ Route::post('/login', [loginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('/logout', [loginController::class, 'logout']);
+});
+
+Route::middleware([AdminMiddleware::class])->group(function () {
+    //admin-only routes here
+
 });
