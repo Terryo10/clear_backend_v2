@@ -58,10 +58,10 @@ class KeyFactorController extends Controller
      */
     public function update(Request $request, KeyFactor $keyFactor)
     {
-        return $keyFactor;
-        $keyFactor->update(["name" => $request->input('name')]);
 
-        return $this->jsonSuccess(200, 'Request Updated Successful', $keyFactor, 'keyFactor');
+        $keyFactor->update(["name" => $request->name]);
+
+        return $this->jsonSuccess(200, 'Request Updated Successful', $keyFactor, 'keyfactor');
     }
 
     /**
@@ -71,6 +71,6 @@ class KeyFactorController extends Controller
     {
         $keyFactor->delete();
 
-        return response()->json(null, 204);
+        return $this->jsonSuccess(200, 'Data Deleted Successfully!!', [], 'message');
     }
 }

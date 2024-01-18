@@ -72,6 +72,6 @@ class FrequencyController extends Controller
     {
         $frequency->delete();
 
-        return response()->json('deleted successfully', 204);
+        return $this->jsonSuccess(200, 'Data Deleted Successfully!!', [], 'message');
     }
 }
