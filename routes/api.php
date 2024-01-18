@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\FrequencyController;
+use App\Http\Controllers\Admin\KeyFactorController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Auth\loginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Middleware\AdminMiddleware;
@@ -28,5 +31,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 
 Route::middleware([AdminMiddleware::class])->group(function () {
     //admin-only routes here
-
-});
+    Route::resource('/admin/frequency', FrequencyController::class);
+    Route::resource('/admin/keyfactor', KeyFactorController::class);
+    Route::resource('/admin/service', ServiceController::class);
+})->middleware(['Auth:sanctum']);
