@@ -29,9 +29,9 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('/logout', [loginController::class, 'logout']);
 });
 
-Route::middleware([AdminMiddleware::class])->group(function () {
+Route::middleware(['Auth:sanctum',AdminMiddleware::class])->group(function () {
     //admin-only routes here
     Route::resource('/admin/frequency', FrequencyController::class);
     Route::resource('/admin/keyfactor', KeyFactorController::class);
     Route::resource('/admin/service', ServiceController::class);
-})->middleware(['Auth:sanctum']);
+});
