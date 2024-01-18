@@ -22,7 +22,7 @@ class FrequencyController extends Controller
      */
     public function create()
     {
-        return $this->jsonError(405,'Not supported');
+        return $this->jsonError(405, 'Not supported');
     }
 
     /**
@@ -51,7 +51,7 @@ class FrequencyController extends Controller
     public function edit(Frequency $frequency)
     {
 
-        return $this->jsonError(405,'Not supported');
+        return $this->jsonError(405, 'Not supported');
     }
 
     /**
@@ -59,8 +59,8 @@ class FrequencyController extends Controller
      */
     public function update(Request $request, Frequency $frequency)
     {
-        $frequency->name = $request->input('name');
-        $frequency->save();
+
+        $frequency->update(["name" => $request->name]);
 
         return $this->jsonSuccess(200, 'Request Successful', $frequency, 'frequencies');
     }
@@ -73,6 +73,5 @@ class FrequencyController extends Controller
         $frequency->delete();
 
         return response()->json('deleted successfully', 204);
-
     }
 }
