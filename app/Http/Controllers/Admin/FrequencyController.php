@@ -14,7 +14,7 @@ class FrequencyController extends Controller
     public function index()
     {
         $frequencies = Frequency::all();
-        return response()->json($frequencies);
+        return $this->jsonSuccess(200, 'Request Successful', $frequencies, 'frequencies');
     }
 
     /**
@@ -22,7 +22,7 @@ class FrequencyController extends Controller
      */
     public function create()
     {
-        return response()->json(['message' => 'Not supported'], 405);
+        return $this->jsonError(405,'Not supported');
     }
 
     /**
@@ -34,7 +34,7 @@ class FrequencyController extends Controller
         $frequency->name = $request->input('name');
         $frequency->save();
 
-        return response()->json($frequency, 201);
+        return $this->jsonSuccess(200, 'Request Successful', $frequency, 'frequencies');
     }
 
     /**
@@ -42,7 +42,7 @@ class FrequencyController extends Controller
      */
     public function show(Frequency $frequency)
     {
-        return response()->json($frequency);
+        return $this->jsonSuccess(200, 'Request Successful', $frequency, 'frequencies');
     }
 
     /**
@@ -50,7 +50,8 @@ class FrequencyController extends Controller
      */
     public function edit(Frequency $frequency)
     {
-        return response()->json(['message' => 'Not supported'], 405);
+
+        return $this->jsonError(405,'Not supported');
     }
 
     /**
@@ -61,7 +62,7 @@ class FrequencyController extends Controller
         $frequency->name = $request->input('name');
         $frequency->save();
 
-        return response()->json($frequency);
+        return $this->jsonSuccess(200, 'Request Successful', $frequency, 'frequencies');
     }
 
     /**
@@ -71,6 +72,7 @@ class FrequencyController extends Controller
     {
         $frequency->delete();
 
-        return response()->json(null, 204);
+        return response()->json('deleted successfully', 204);
+
     }
 }

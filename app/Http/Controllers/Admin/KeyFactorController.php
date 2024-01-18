@@ -14,7 +14,8 @@ class KeyFactorController extends Controller
     public function index()
     {
         $keyFactors = KeyFactor::all();
-        return response()->json($keyFactors);
+        return $this->jsonSuccess(200, 'Request Successful', $keyFactors, 'keyFactors');
+
     }
 
     /**
@@ -22,7 +23,7 @@ class KeyFactorController extends Controller
      */
     public function create()
     {
-        return response()->json(['message' => 'Not supported'], 405);
+        return $this->jsonError(405,'Not supported');
     }
 
     /**
@@ -34,7 +35,7 @@ class KeyFactorController extends Controller
         $keyFactor->name = $request->input('name');
         $keyFactor->save();
 
-        return response()->json($keyFactor, 201);
+        return $this->jsonSuccess(200, 'Request Successful', $keyFactor, 'keyFactors');
     }
 
     /**
@@ -42,7 +43,7 @@ class KeyFactorController extends Controller
      */
     public function show(KeyFactor $keyFactor)
     {
-        return response()->json($keyFactor);
+        return $this->jsonSuccess(200, 'Request Successful', $keyFactor, 'keyFactor');
     }
 
     /**
@@ -61,7 +62,7 @@ class KeyFactorController extends Controller
         $keyFactor->name = $request->input('name');
         $keyFactor->save();
 
-        return response()->json($keyFactor);
+        return $this->jsonSuccess(200, 'Request Successful', $keyFactor, 'keyFactor');
     }
 
     /**
