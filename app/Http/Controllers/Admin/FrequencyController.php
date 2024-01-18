@@ -60,7 +60,7 @@ class FrequencyController extends Controller
     public function update(Request $request, Frequency $frequency)
     {
 
-        $frequency->update(["name" => $request->name]);
+        $frequency->update(["name" => $request->input('name')]);
 
         return $this->jsonSuccess(200, 'Request Successful', $frequency, 'frequencies');
     }
