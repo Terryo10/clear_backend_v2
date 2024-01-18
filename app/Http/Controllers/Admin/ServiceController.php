@@ -13,7 +13,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $services = Service::all();
+        return response()->json($services);
     }
 
     /**
@@ -21,7 +22,7 @@ class ServiceController extends Controller
      */
     public function create()
     {
-        //
+        // Not implemented in this example
     }
 
     /**
@@ -29,7 +30,17 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'required|string|max:255',
+            'status' => 'boolean',
+        ]);
+
+        // Create a new service
+        $service = Service::create($request->all());
+
+        return response()->json($service, 201);
     }
 
     /**
@@ -37,7 +48,7 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        return response()->json($service);
     }
 
     /**
@@ -45,7 +56,7 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
-        //
+        // Not implemented in this example
     }
 
     /**
@@ -53,7 +64,17 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'name' => 'string|max:255',
+            'image' => 'string|max:255',
+            'status' => 'boolean',
+        ]);
+
+        // Update the service
+        $service->update($request->all());
+
+        return response()->json($service);
     }
 
     /**
@@ -61,6 +82,9 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        // Delete the service
+        $service->delete();
+
+        return response()->json(null, 204);
     }
 }
