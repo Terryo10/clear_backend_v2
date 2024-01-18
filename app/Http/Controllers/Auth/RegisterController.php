@@ -37,7 +37,7 @@ class RegisterController extends Controller
             } else {
 
                 $input = array(
-                    'first_name' => $request->input('first_name'),
+                    'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
                     'email' => $request->email,
                     'password' => bcrypt($request->password),
