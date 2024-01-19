@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class ServiceController extends Controller
 {
@@ -33,14 +34,27 @@ class ServiceController extends Controller
         // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|string|max:255',
+            'image*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'boolean',
         ]);
-
+        $images_new = "";
+        if ($file = $request->file('image')) {
+            $var = date_create();
+            $date = date_format($var, 'Ymd');
+            $imageName = $date . '_' . $file->getClientOriginalName();
+            $file->move(public_path() . '/uploads/', $imageName);
+            $url = URL::to("/") . '/uploads/' . $imageName;
+            $images_new = $url;
+        }
+        $input = [
+            "name" => $request->name,
+            "image" => $images_new,
+            "status" => $request->status,
+        ];
         // Create a new service
-        $service = Service::create($request->all());
+        $service = Service::create($input);
 
-        return response()->json($service, 201);
+        return response()->json(["status" => 200, "message" => "service created successfully"]);
     }
 
     /**
@@ -67,7 +81,6 @@ class ServiceController extends Controller
         // Validate the request data
         $request->validate([
             'name' => 'string|max:255',
-            'image' => 'string|max:255',
             'status' => 'boolean',
         ]);
 
