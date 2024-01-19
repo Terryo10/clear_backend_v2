@@ -31,7 +31,27 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'service_id' => 'required',
+                'street' => 'required',
+                'city' => 'required',
+                'zip_code' => 'required',
+                'lat' => 'nullable',
+                'lng' => 'nullable',
+                'budget' => 'required | numeric',
+                'frequency' => 'required',
+                'start_date' => 'required ',
+                'end_date' => 'required ',
+                'key_factor' => 'required',
+                'additionalRequirements' => 'nullable',
+                'user_id' => 'nullable',
+                'state' => 'nullable',
+                'project_color' => 'nullable',
+        ]);
+
+
     }
 
     /**
