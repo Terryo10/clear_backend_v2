@@ -32,6 +32,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+
         // Validate the request data
         $validator = Validator::make(
             $request->all(),
@@ -53,11 +54,11 @@ class ServiceController extends Controller
                 $url = 'public/uploads/' . $imageName;
                 $images_new = $url;
             }
-            $input = [
+            $input = array(
                 "name" => $request->name,
                 "image" => $images_new,
                 "status" => $request->status,
-            ];
+            );
             // Create a new service
             $service = Service::create($input);
 
