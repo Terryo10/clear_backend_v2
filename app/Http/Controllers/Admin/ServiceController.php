@@ -85,33 +85,36 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Service $service)
+    public function update(Request $request)
     {
         $request->validate([
             'name' => 'string|max:255',
-            'status' => 'boolean',
         ]);
-        $inputs = [];
-        $images_new = "";
+        $service= Service::findOrfail( $request->input('id'));
 
-        if ($file = $request->file('image')) {
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
             $var = date_create();
             $date = date_format($var, 'Ymd');
             $imageName = $date . '_' . $file->getClientOriginalName();
-            $file->move(public_path() . '/uploads/', $imageName);
+            $file->move(public_path('uploads'), $imageName);
             $url = '/uploads/' . $imageName;
             $images_new = $url;
-        }
-        if($request->file('image')){
-            $inputs = ["image"=> $images_new,"status"=>$request->status,"name"=>$request->name];
-        }else{
-            $inputs = $request->all();
+        } else {
+            $images_new = $service->image; // Preserve existing image if no new image is uploaded
         }
 
+        $inputs = [
+            'image' => $images_new,
+            'status' => $request->status,
+            'name' => $request->name
+        ];
 
         $service->update($inputs);
+        return $this->jsonSuccess(200, 'Request Successful', $service, 'service');
 
-        return response()->json($service);
+
+
     }
 
     /**

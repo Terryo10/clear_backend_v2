@@ -37,7 +37,9 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     //admin-only routes here
     Route::resource('/admin/frequency', FrequencyController::class);
+    Route::post('/update-service', [ServiceController::class, 'update']);
     Route::resource('/admin/service', ServiceController::class);
+
     Route::resource('/admin/projects', ProjectController::class);
     Route::post('admin/project-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
     Route::get('admin/key_factors',[KeyFactorsController::class, 'index']);

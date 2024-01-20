@@ -24,7 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'deleted_at'
+        'deleted_at',
+        'fcm_token'
     ];
 
     /**

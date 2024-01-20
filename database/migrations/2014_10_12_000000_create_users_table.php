@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->string('role')->default('USER');
             $table->string('status')->default('pending');
+            $table->string('fcm_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
