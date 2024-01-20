@@ -16,7 +16,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::all();
-        return response()->json($services);
+        return response()->json(["services" => $services, "status" => 200, "message" => "data fetched successfully"]);
     }
 
     /**
@@ -51,7 +51,7 @@ class ServiceController extends Controller
                 $date = date_format($var, 'Ymd');
                 $imageName = $date . '_' . $file->getClientOriginalName();
                 $file->move(public_path() . '/uploads/', $imageName);
-                $url = 'public/uploads/' . $imageName;
+                $url = '/uploads/' . $imageName;
                 $images_new = $url;
             }
             $input = array(
