@@ -1,39 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use mysql_xdevapi\Exception;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $projects = Project::paginate(10);
-        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+    public function createProject(Request $request){
         $validator = Validator::make(
             $request->all(),
             [
@@ -52,7 +29,6 @@ class ProjectController extends Controller
                 'key_factor' => 'required',
                 'additionalRequirements' => 'nullable',
                 'state' => 'nullable',
-                'user_id'=>'required|numeric'
             ]
         );
 
@@ -61,47 +37,11 @@ class ProjectController extends Controller
 
         }else{
             try{
-               $project =  Project::create($request->all());
+                $project =  Project::create(array_merge($request->all(),[ 'user_id' => Auth::user()->id]));
                 return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
             }catch (\Error $exception) {
                 return response()->json(['status' => 401, 'message' => "validation failed", $exception]);
             }
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Project $project)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Project $project)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project $project)
-    {
-        //
-    }
-
-    public function projectStatus(){
-
     }
 }

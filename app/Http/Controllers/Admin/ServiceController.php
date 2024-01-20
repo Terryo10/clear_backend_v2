@@ -43,7 +43,7 @@ class ServiceController extends Controller
             ]
         );
         if ($validator->fails()) {
-            return response()->json(['status' => 401, 'message' => "validation failes", "errors" => $validator->errors()]);
+            return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
         } else {
             $images_new = "";
             if ($file = $request->file('image')) {
@@ -59,10 +59,10 @@ class ServiceController extends Controller
                 "image" => $images_new,
                 "status" => $request->status,
             );
-            // Create a new service
+
             $service = Service::create($input);
 
-            return response()->json(["status" => 200, "message" => "service created successfully"]);
+            return $this->jsonSuccess(200, 'Request Successful', $service, 'service');
         }
     }
 
@@ -87,14 +87,29 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        // Validate the request data
         $request->validate([
             'name' => 'string|max:255',
             'status' => 'boolean',
         ]);
+        $inputs = [];
+        $images_new = "";
 
-        // Update the service
-        $service->update($request->all());
+        if ($file = $request->file('image')) {
+            $var = date_create();
+            $date = date_format($var, 'Ymd');
+            $imageName = $date . '_' . $file->getClientOriginalName();
+            $file->move(public_path() . '/uploads/', $imageName);
+            $url = '/uploads/' . $imageName;
+            $images_new = $url;
+        }
+        if($request->file('image')){
+            $inputs = ["image"=> $images_new,"status"=>$request->status,"name"=>$request->name];
+        }else{
+            $inputs = $request->all();
+        }
+
+
+        $service->update($inputs);
 
         return response()->json($service);
     }

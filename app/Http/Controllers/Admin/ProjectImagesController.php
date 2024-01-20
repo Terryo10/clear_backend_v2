@@ -3,28 +3,37 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ProjectImagesController extends Controller
 {
-    public function uploadImagesFromAdmin(Request $request){
+    public function uploadImagesFromAdmin(Request $request)
+    {
+        $project = Project::find($request->project_id);
 
-        if ($request->file('images')) {
-            //loop through images
-            foreach ($request->file('images') as $image) {
-                $path = $this->imageRepoInterface->uploadImage($image, 'projects/images');
-//                $project->images()->create([
-//                    "image_name" => $path,
-//                ]);
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');
+
+            foreach ($images as $image) {
+                $path = $image->store('images'); // Store the image in the storage/app/images directory
+
+                $project->images()->create([
+                    'image_name' => $path,
+                ]);
             }
-            // $this->imageRepoInterface->uploadBulkImagesAndSaveRelationship($request->file('images'), 'projects', $project);
         }
+
         if ($request->hasFile('scopeFiles')) {
-            $path = $this->imageRepoInterface->uploadImage($request->file('scopeFiles'), 'projects/file');
-            $project->scopeFiles()->create([
-                "file_name" => $path,
-            ]);
-            // $this->imageRepoInterface->uploadBulkFilesAndSaveRelationship($request->file('scopeFiles'), 'projects', $project);
+            $scopeFiles = $request->file('scopeFiles');
+
+            foreach ($scopeFiles as $file) {
+                $path = $file->store('scopeFiles'); // Store the file in the storage/app/scopeFiles directory
+
+                $project->scopeFiles()->create([
+                    'file_name' => $path,
+                ]);
+            }
         }
     }
 
