@@ -20,7 +20,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::paginate(10);
+        $projects = Project::paginate(1);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
