@@ -60,7 +60,7 @@ class ProjectController extends Controller
                $project =  Project::create($request->all());
                 return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
             }catch (\Error $exception) {
-                return response()->json(['status' => 401, 'message' => "validation failed", $exception]);
+                return response()->json(['status' => 402, 'message' => "validation failed", $exception]);
             }
         }
     }
