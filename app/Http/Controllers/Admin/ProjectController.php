@@ -22,7 +22,6 @@ class ProjectController extends Controller
     {
         $projects = Project::paginate(10);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
-
     }
 
     /**
@@ -48,18 +47,35 @@ class ProjectController extends Controller
                 'key_factor' => 'required',
                 'additionalRequirements' => 'nullable',
                 'state' => 'nullable',
-                'user_id'=>'required|numeric'
+                'user_id' => 'required|numeric'
             ]
         );
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
-
-        }else{
-            try{
-               $project =  Project::create($request->all());
-                return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
-            }catch (\Error $exception) {
+        } else {
+            $inputs = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'service_id' => $request->service_id,
+                'street' => $request->street,
+                'city' => $request->city,
+                'zip_code' => $request->zip_code,
+                'lat' => '',
+                'lng' => '',
+                'budget' => $request->budget,
+                'frequency' => $request->frequency,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'key_factor' => $request->key_factor,
+                'additionalRequirements' => '',
+                'state' => '',
+                'user_id' => $request->user_id
+            ];
+            try {
+                $project =  Project::create($inputs);
+                return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
+            } catch (\Error $exception) {
                 return response()->json(['status' => 402, 'message' => "validation failed", $exception]);
             }
         }
@@ -98,14 +114,14 @@ class ProjectController extends Controller
             ];
         // $notification->save();
         $this->broadcastNotification($users, $notification);
-        return $this->jsonSuccess(200, 'Proposal Requests Sent','proposal' , 'proposal');
+        return $this->jsonSuccess(200, 'Proposal Requests Sent', 'proposal', 'proposal');
     }
 
     public function removeContratorRequestForProposal(Request $request)
     {
         $requestProposal = RequestProposal::find($request->id);
         $requestProposal->delete();
-        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed','proposal' , 'proposal');
+        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', 'proposal', 'proposal');
     }
 
     public function sendPropsal(Request $request)
@@ -124,16 +140,22 @@ class ProjectController extends Controller
 
         if (!$request->has('attachment') && ($request->description == null || $request->description == " ")) {
             return $this->jsonError(
-                400, 'Please add a file or detailed description','proposal' , 'proposal');
-
-
+                400,
+                'Please add a file or detailed description',
+                'proposal',
+                'proposal'
+            );
         }
 
         $proposal = Proposal::where('project_id', $data['project_id'])->where('contractor_id', auth()->user()->id)->first();
 
         if ($proposal) {
             return $this->jsonError(
-                400, 'You have already sent a proposal for this project','proposal' , 'proposal');
+                400,
+                'You have already sent a proposal for this project',
+                'proposal',
+                'proposal'
+            );
         }
 
         $project = Project::find($data['project_id']);
@@ -144,8 +166,7 @@ class ProjectController extends Controller
         $proposalRequest->save();
 
         $contractor = User::find(Auth::user()->id);
-        if( $request->file('attachment')){
-
+        if ($request->file('attachment')) {
         }
         $project->proposals()->create([
             'cost' => $data['cost'],
@@ -160,7 +181,7 @@ class ProjectController extends Controller
             'scope_of_work' => $data['scope_of_work'],
         ]);
         //get contractor
-        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed','proposal' , 'proposal');
+        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', 'proposal', 'proposal');
     }
 
     public function search(Request $request)
@@ -193,8 +214,8 @@ class ProjectController extends Controller
         })->orderBy('created_at', 'DESC')
             ->paginate(20);
 
-//        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
+        //        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
 
-        return $this->jsonSuccess(200, 'Request Successful',$projects , 'projects');
+        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 }
