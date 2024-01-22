@@ -15,12 +15,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function jsonError($statusCode = 500, $message = "Unexpected Error"): \Illuminate\Http\JsonResponse
+    public function jsonError($statusCode = 500, $message = "Unexpected Error",$data = [], $key): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             "success" => false,
             "status" => $statusCode,
-            "message" => $message
+            "message" => $message,
+            $key => $data,
         ], $statusCode);
     }
 

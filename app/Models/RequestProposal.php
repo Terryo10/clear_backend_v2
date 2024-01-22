@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RequestProposal extends Model
 {
+    protected $guarded;
+
     use HasFactory;
 }

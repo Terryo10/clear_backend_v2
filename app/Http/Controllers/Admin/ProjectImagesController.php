@@ -10,7 +10,7 @@ class ProjectImagesController extends Controller
 {
     public function uploadImagesFromAdmin(Request $request)
     {
-        $project = Project::find($request->project_id);
+        $project = Project::findOrfail($request->project_id);
 
         if ($request->hasFile('images')) {
             $images = $request->file('images');
@@ -19,7 +19,8 @@ class ProjectImagesController extends Controller
                 $path = $image->store('images'); // Store the image in the storage/app/images directory
 
                 $project->images()->create([
-                    'image_name' => $path,
+                    'project_id'=> $request->project_id,
+                    'path' => $path,
                 ]);
             }
         }
@@ -31,7 +32,8 @@ class ProjectImagesController extends Controller
                 $path = $file->store('scopeFiles'); // Store the file in the storage/app/scopeFiles directory
 
                 $project->scopeFiles()->create([
-                    'file_name' => $path,
+                    'project_id'=> $request->project_id,
+                    'path' => $path,
                 ]);
             }
         }

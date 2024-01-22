@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('site_info')->nullable();
             $table->string('offer_pdf')->nullable();
             $table->string('signature')->nullable();
-            $table->foreignId('selected_option')->nullable()->constrained('offer_options');
+            $table->foreignId('selected_option')->nullable()->constrained('offer_options')->onDelete('cascade');
             $table->timestamps();
         });
     }

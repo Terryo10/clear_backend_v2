@@ -91,4 +91,21 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
+
+    public function updateStatus(Request $request, User $user)
+    {
+        //update user status
+        $data = $request->validate([
+            'status' => 'required|string',
+        ]);
+        $user->status = $data['status'];
+        $user->save();
+        return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
+    }
+
+    public function getContractors(){
+        $contractors = User::where('role','=','CONTRACTOR')->get();
+        return $this->jsonSuccess(200, 'Request Successful', $contractors, 'contractors');
+
+    }
 }

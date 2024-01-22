@@ -20,7 +20,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::paginate(1);
+        $projects = Project::paginate(10);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
@@ -29,73 +29,84 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'title' => 'required',
-                'description' => 'required',
-                'service_id' => 'required',
-                'street' => 'required',
-                'city' => 'required',
-                'zip_code' => 'required',
-                'lat' => 'nullable',
-                'lng' => 'nullable',
-                'budget' => 'required | numeric',
-                'frequency' => 'required',
-                'start_date' => 'required ',
-                'end_date' => 'required ',
-                'key_factor' => 'required',
-                'additionalRequirements' => 'nullable',
-                'state' => 'nullable',
-                'user_id' => 'required|numeric'
-            ]
-        );
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+            'service_id' => 'required',
+            'street' => 'required',
+            'city' => 'required',
+            'zip_code' => 'required',
+            'budget' => 'required|numeric',
+            'frequency' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'key_factor' => 'required',
+            'additionalRequirements' => 'nullable',
+            'state' => 'nullable',
+            'user_id' => 'required|numeric'
+        ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
-        } else {
-            $inputs = [
-                'title' => $request->title,
-                'description' => $request->description,
-                'service_id' => $request->service_id,
-                'street' => $request->street,
-                'city' => $request->city,
-                'zip_code' => $request->zip_code,
-                'lat' => '',
-                'lng' => '',
-                'budget' => $request->budget,
-                'frequency' => $request->frequency,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'key_factor' => $request->key_factor,
-                'additionalRequirements' => '',
-                'state' => '',
-                'user_id' => $request->user_id
-            ];
-            try {
-                $project =  Project::create($inputs);
-                return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
-            } catch (\Error $exception) {
-                return response()->json(['status' => 402, 'message' => "validation failed", $exception]);
-            }
+            return $this->jsonError(401, 'Request failed. Some fields are required', $validator->errors(), 'errors');
+        }
+
+        $inputs = [
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'service_id' => $request->input('service_id'),
+            'street' => $request->input('street'),
+            'city' => $request->input('city'),
+            'zip_code' => $request->input('zip_code'),
+            'lat' => $request->input('lat'),
+            'lng' => $request->input('lng'),
+            'budget' => $request->input('budget'),
+            'frequency' => $request->input('frequency'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'key_factor' => $request->input('key_factor'),
+            'additionalRequirements' => $request->input('additionalRequirements', ''),
+            'state' => $request->input('state', ''),
+            'user_id' => $request->input('user_id')
+        ];
+
+        try {
+            $project = Project::create($inputs);
+            $project->setProjectStatus('request_for_bids_received');
+            $project->history()->create([
+                "status" => $project->status,
+                "user_id" => $request->input('user_id'),
+            ]);
+            return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 402, 'message' => 'Validation failed', 'error' => $exception->getMessage()]);
         }
     }
 
 
-    public function sendContrators(Request $request)
+    public function sendProjectToContractors(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make(
+            $request->all(),
+            [
             'project_id' => 'required',
             'contractors' => 'required',
             'message' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return  $this->jsonError(401,'Request failed some fields are required',  $validator->getMessageBag(), 'errors');
+
+        }
+
+        $data = $request->all();
+
+
         $project = Project::find($data['project_id']);
         $project->setProjectStatus('sourcing_of_vendors');
-        //loop trough contractors
         $users = [$project->user];
-        foreach ($data['contractors'] as $contractor) {
+        foreach ($data['contractors'] as $contractor_id) {
             //get contractor
-            $contractor = User::find($contractor['id']);
+            $contractor = User::find($contractor_id);
             array_push($users, $contractor);
             $this->sendEmail("Request Proposal", "You have new incoming project request please review on dashboard and submit proposal", $contractor->email);
             RequestProposal::create([
@@ -117,19 +128,19 @@ class ProjectController extends Controller
         return $this->jsonSuccess(200, 'Proposal Requests Sent', 'proposal', 'proposal');
     }
 
-    public function removeContratorRequestForProposal(Request $request)
+    public function removeContractorRequestForProposal(Request $request)
     {
         $requestProposal = RequestProposal::find($request->id);
         $requestProposal->delete();
         return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', 'proposal', 'proposal');
     }
 
-    public function sendPropsal(Request $request)
+    public function sendProposal(Request $request)
     {
-        $data = $request->validate([
+        $validation =Validator::make( $request->all(),[
             'project_id' => 'required',
-            'cost' => 'required',
-            'description' => 'nullable',
+            'cost' => 'required | numeric',
+            'description' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
             'contract_terms_conditions' => 'required',
@@ -137,6 +148,14 @@ class ProjectController extends Controller
             'site_info' => 'required',
             'scope_of_work' => 'required'
         ]);
+
+        if ($validation->fails()) {
+            return  $this->jsonError(401,'Request failed some fields are required',  $validation->getMessageBag(), 'errors');
+
+        }
+
+        $data = $request->all();
+
 
         if (!$request->has('attachment') && ($request->description == null || $request->description == " ")) {
             return $this->jsonError(
@@ -147,8 +166,8 @@ class ProjectController extends Controller
             );
         }
 
-        $proposal = Proposal::where('project_id', $data['project_id'])->where('contractor_id', auth()->user()->id)->first();
 
+        $proposal = Proposal::where('project_id', $data['project_id'])->where('contractor_id', auth()->user()->id)->first();
         if ($proposal) {
             return $this->jsonError(
                 400,
@@ -166,7 +185,10 @@ class ProjectController extends Controller
         $proposalRequest->save();
 
         $contractor = User::find(Auth::user()->id);
+        $path = '';
         if ($request->file('attachment')) {
+             $path = $request->file('attachment')->store('projects/files');
+
         }
         $project->proposals()->create([
             'cost' => $data['cost'],
@@ -174,14 +196,14 @@ class ProjectController extends Controller
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'contractor_id' => $contractor->id,
-            'attachment' => $request->hasFile('attachment') ? $this->imageRepoInterface->uploadImage($request->file('attachment'), 'projects/files') : null,
+            'attachment' =>$path,
             'contract_terms_conditions' => $data['contract_terms_conditions'],
             'execution_plan' => $data['execution_plan'],
             'site_info' => $data['site_info'],
             'scope_of_work' => $data['scope_of_work'],
         ]);
         //get contractor
-        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', 'proposal', 'proposal');
+        return $this->jsonSuccess(200, 'Proposal Created', 'proposal', 'proposal');
     }
 
     public function search(Request $request)
@@ -201,21 +223,4 @@ class ProjectController extends Controller
         return ProjectResource::collection($requests);
     }
 
-    public function clientProjects()
-    {
-        $user = auth()->user();
-
-        // get projects for user with staus Project In Progress or Completed
-
-
-        $projects = Project::where('user_id', auth()->user()->id)->where(function ($query) {
-            $query->where('status', "Project In Progress")
-                ->orWhere('status', "Completed");
-        })->orderBy('created_at', 'DESC')
-            ->paginate(20);
-
-        //        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
-
-        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
-    }
 }

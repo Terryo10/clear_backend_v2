@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->text('additionalRequirements')->nullable();
             $table->boolean('is_drafted')->default(false);
+            $table->foreignId('contractor_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

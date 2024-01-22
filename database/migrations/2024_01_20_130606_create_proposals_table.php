@@ -13,12 +13,18 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contractor_id')->constrained('users');
-            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('contractor_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->double('cost');
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
             $table->string('attachment')->nullable();
+            $table->text('description')->nullable();
+            $table->text('contract_terms_conditions')->nullable();
+            $table->text('execution_plan')->nullable();
+            $table->text('site_info')->nullable();
+            $table->text('scope_of_work')->nullable();
+
             $table->timestamps();
         });
     }

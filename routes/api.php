@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\FrequencyController;
-use App\Http\Controllers\Admin\KeyFactorController;
 use App\Http\Controllers\Admin\KeyFactorsController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProjectImagesController;
@@ -9,8 +8,11 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\loginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Contractor\ContractorProjectController;
+use App\Http\Controllers\User\KeyFactorController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\ContractorMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,7 +41,6 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::resource('/admin/frequency', FrequencyController::class);
     Route::post('/update-service', [ServiceController::class, 'update']);
     Route::resource('/admin/service', ServiceController::class);
-
     Route::resource('/admin/projects', ProjectController::class);
     Route::post('admin/project-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
     Route::get('admin/key_factors',[KeyFactorsController::class, 'index']);
@@ -47,13 +48,29 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('admin/key_factors',[KeyFactorsController::class, 'store']);
     Route::delete('admin/key_factors/{id}',[KeyFactorsController::class, 'destroy']);
     Route::resource('admin/users', UserController::class);
+    Route::post('admin/remove-contractor-request-for-proposal', [ProjectController::class,'removeContractorRequestForProposal']);
+    Route::post('admin/send-proposal-to-contractor',[ProjectController::class, 'sendProjectToContractors']);
+    Route::get('admin/contractors',[UserController::class, 'getContractors']);
+
 });
 
+//USER
 Route::middleware(['Auth:sanctum'])->group(function () {
-    Route::get('key_factors',[\App\Http\Controllers\User\KeyFactorController::class, 'getKeyFactors']);
-    Route::get('frequencies',[\App\Http\Controllers\User\KeyFactorController::class, 'getFrequencies']);
+    Route::get('services',[ServiceController::class, 'index']);
+    Route::get('key_factors',[KeyFactorController::class, 'getKeyFactors']);
+    Route::get('frequencies',[KeyFactorController::class, 'getFrequencies']);
     Route::get('updateProfilePicture',[ProfileController::class, 'updateProfilePicture']);
     Route::get('updatePassword',[ProfileController::class, 'updateUserPassword']);
+    Route::post('request_service', [\App\Http\Controllers\User\ProjectController::class, 'createProject']);
+    Route::get('user_projects',[\App\Http\Controllers\User\ProjectController::class, 'clientProjects']);
+    Route::post('upload-images',[ProjectController::class, 'uploadImagesFromAdmin']);
+
 });
 
+//Contractor
 
+Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function () {
+    Route::post('contractor/sent-proposal-to-user', [ProjectController::class,'sendProposal']);
+    Route::get('contractor/projects', [ContractorProjectController::class,'contactorProjects']);
+
+});

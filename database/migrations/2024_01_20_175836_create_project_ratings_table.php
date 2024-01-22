@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('project_ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->text('comment');
             $table->integer('star_rating');
             $table->timestamps();

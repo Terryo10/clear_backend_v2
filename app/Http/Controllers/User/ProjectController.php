@@ -44,4 +44,22 @@ class ProjectController extends Controller
             }
         }
     }
+
+
+    public function clientProjects()
+    {
+
+        $projects = Project::where('user_id', auth()->user()->id)->where(function ($query) {
+            $query->where('status', "Project In Progress")
+                ->orWhere('status', "Completed");
+        })->orderBy('created_at', 'DESC')
+            ->paginate(20);
+
+        //        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
+
+        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
+    }
+
+
+
 }
