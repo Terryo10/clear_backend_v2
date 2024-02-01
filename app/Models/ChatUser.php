@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OfferOptions extends Model
+class ChatUser extends Model
 {
-
     use HasFactory;
+
     protected $guarded;
 
-    protected $with = ['contractor'];
+    protected $with = ['user'];
 
-    public function contractor()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'contractor_id', 'id');
+        return $this->belongsTo(User::class);
     }
-
 }

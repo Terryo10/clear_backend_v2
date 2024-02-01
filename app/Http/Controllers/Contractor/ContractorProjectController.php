@@ -11,7 +11,6 @@ class ContractorProjectController extends Controller
 
     public function contactorProjects()
     {
-        return auth()->user();
         $projects = Project::where('contractor_id', auth()->user()->id)
             ->orderBy('created_at', 'DESC')
             ->paginate(20);

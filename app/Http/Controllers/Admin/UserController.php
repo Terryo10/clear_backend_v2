@@ -108,4 +108,9 @@ class UserController extends Controller
         return $this->jsonSuccess(200, 'Request Successful', $contractors, 'contractors');
 
     }
+
+    public function updateProfile(Request $request){
+        //write code to update profile
+
+    }
 }

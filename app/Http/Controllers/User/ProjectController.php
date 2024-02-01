@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -38,9 +39,17 @@ class ProjectController extends Controller
         }else{
             try{
                 $project =  Project::create(array_merge($request->all(),[ 'user_id' => Auth::user()->id]));
+                $notification =
+                    [
+                        'title' => 'New Project by ' . Auth::user()->first_name . ' ' . Auth::user()->last_name,
+                        'body' => 'New Incoming Project Request please review',
+                        'type' => 'Global',
+                    ];
+                $this->broadcastNotification(
+                    [Auth::user()->id], $notification);
                 return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
-            }catch (\Error $exception) {
-                return response()->json(['status' => 401, 'message' => "validation failed", $exception]);
+            }catch (\Exception $exception) {
+                return response()->json(['status' => 401, 'message' => "Error", $exception]);
             }
         }
     }
@@ -57,6 +66,12 @@ class ProjectController extends Controller
 
         //        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
 
+        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
+    }
+
+    public function clientRequests(){
+        $projects = Project::where('user_id', auth()->user()->id)->orderBy('created_at', 'DESC')
+            ->paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 

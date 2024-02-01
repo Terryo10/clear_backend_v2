@@ -35,6 +35,7 @@ class NotifyUser implements ShouldBroadcast
      */
     public function broadcastOn()
     {
+
         //broadcast on that chat channel
         return new Channel('user_notification.' . $this->user);
     }

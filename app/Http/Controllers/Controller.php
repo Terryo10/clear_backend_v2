@@ -54,19 +54,17 @@ class Controller extends BaseController
     public function broadcastNotification($users, $notificationData)
     {
         if ($notificationData['type'] == 'Global') {
-
-            $notification = ModelsNotification::create([
-                'title' => $notificationData['title'],
-                'body' => $notificationData['body'],
-                'type' => $notificationData['type'],
-            ]);
             //get admin users
-            $adminUsers = User::whereHas('roles', function ($query) {
-                $query->whereHas('role', function ($query) {
-                    $query->where('name', 'ADMIN');
-                });
-            })->get();
+            $adminUsers = User::where('role', 'ADMIN')->get();
+
             foreach ($adminUsers as $adminUser) {
+
+                $notification = ModelsNotification::create([
+                    'title' => $notificationData['title'],
+                    'body' => $notificationData['body'],
+                    'type' => $notificationData['type'],
+                    'user_id' => $adminUser->id,
+                ]);
                 broadcast(new NotifyUser($adminUser->id, $notification))->toOthers();
                 $data = [
                     'title' => $notificationData['title'],

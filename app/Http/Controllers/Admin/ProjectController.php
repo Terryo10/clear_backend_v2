@@ -24,6 +24,12 @@ class ProjectController extends Controller
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
+    public function show($id)
+    {
+        $project = Project::find($id);
+        return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -76,6 +82,8 @@ class ProjectController extends Controller
                 "status" => $project->status,
                 "user_id" => $request->input('user_id'),
             ]);
+
+
             return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
         } catch (\Exception $exception) {
             return response()->json(['status' => 402, 'message' => 'Validation failed', 'error' => $exception->getMessage()]);
@@ -220,6 +228,12 @@ class ProjectController extends Controller
                     ->orWhere('last_name', 'like', '%' . $search . '%');
             })
             ->paginate(20);
+        return response()->json(['success' => true, 'message' => 'Request Successful', 'data' => $requests], 200);
+    }
+
+    public function getRequests()
+    {
+        $requests = Project::where('status', 'request_for_bids_received')->paginate(20);
         return ProjectResource::collection($requests);
     }
 
