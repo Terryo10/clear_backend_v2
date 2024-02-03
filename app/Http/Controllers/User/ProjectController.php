@@ -64,8 +64,6 @@ class ProjectController extends Controller
         })->orderBy('created_at', 'DESC')
             ->paginate(20);
 
-        //        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
-
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 

@@ -4,17 +4,44 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
+use App\Interfaces\Chat\ChatRepoInterface;
+use App\Interfaces\Images\ImageRepoInterface;
+use App\Interfaces\Notifications\NotificationRepoInterface;
+use App\Interfaces\Project\ProjectRepoInterface;
+use App\Interfaces\Proposals\RequestProposalRepoInterface;
+use App\Models\ManagerChat;
 use App\Models\Project;
+use App\Models\ProjectRating;
 use App\Models\Proposal;
 use App\Models\RequestProposal;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use mysql_xdevapi\Exception;
 
 class ProjectController extends Controller
 {
+    public $projectRepoInterface;
+    public $imageRepoInterface;
+    public $chatRepoInterface;
+    public $notificationRepoInterface;
+    public $requestProposalRepoInterface;
+
+    public function __construct(
+        NotificationRepoInterface $notificationRepoInterface,
+        ProjectRepoInterface $projectRepoInterface,
+        ImageRepoInterface $imageRepoInterface,
+        ChatRepoInterface $chatRepoInterface,
+        RequestProposalRepoInterface $requestProposalRepoInterface
+    ) {
+        $this->projectRepoInterface = $projectRepoInterface;
+        $this->imageRepoInterface = $imageRepoInterface;
+        $this->chatRepoInterface = $chatRepoInterface;
+        $this->notificationRepoInterface = $notificationRepoInterface;
+        $this->requestProposalRepoInterface = $requestProposalRepoInterface;
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -88,6 +115,10 @@ class ProjectController extends Controller
         } catch (\Exception $exception) {
             return response()->json(['status' => 402, 'message' => 'Validation failed', 'error' => $exception->getMessage()]);
         }
+    }
+
+    public function updateProject(Request $request){
+
     }
 
 
@@ -217,17 +248,45 @@ class ProjectController extends Controller
     public function search(Request $request)
     {
         $search = $request->get('query');
-        $requests = Project::where('title', 'like', '%' . $search . '%')
-            ->orWhere('description', 'like', '%' . $search . '%')
-            ->orWhere('status', 'like', '%' . $search . '%')
-            ->orWhereHas('service', function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('last_name', 'like', '%' . $search . '%');
-            })
-            ->paginate(20);
+        $status = $request->get('status');
+        $service = $request->get('service');
+        $firstName = $request->get('first_name');
+        $lastName = $request->get('last_name');
+
+        $query = Project::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($status) {
+            $query->where('status', 'like', '%' . $status . '%');
+        }
+
+        if ($service) {
+            $query->whereHas('service', function ($q) use ($service) {
+                $q->where('name', 'like', '%' . $service . '%');
+            });
+        }
+
+        if ($firstName || $lastName) {
+            $query->whereHas('user', function ($q) use ($firstName, $lastName) {
+                $q->where(function ($q) use ($firstName, $lastName) {
+                    if ($firstName) {
+                        $q->where('first_name', 'like', '%' . $firstName . '%');
+                    }
+                    if ($lastName) {
+                        $q->orWhere('last_name', 'like', '%' . $lastName . '%');
+                    }
+                });
+            });
+        }
+
+        $requests = $query->paginate(20);
+
         return response()->json(['success' => true, 'message' => 'Request Successful', 'data' => $requests], 200);
     }
 
@@ -235,6 +294,82 @@ class ProjectController extends Controller
     {
         $requests = Project::where('status', 'request_for_bids_received')->paginate(20);
         return ProjectResource::collection($requests);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $data = $request->validate([
+            'project_id' => 'required',
+            'status' => 'required',
+        ]);
+
+        $project = Project::find($data['project_id']);
+        $project->status = $data['status'];
+        $project->save();
+
+        $this->sendEmail('Project Updated', "Project with title " . $project->title . " status changed to " . $data['status'], $project->user->email);
+        return $this->jsonSuccess(200, 'Project Status Updated', 'project', 'project');
+    }
+
+    public function changePaymentStatus(Request $request)
+    {
+        $data = $request->validate([
+            'status' => 'required',
+            'project_id' => 'required'
+        ]);
+
+        $this->projectRepoInterface->changePaymentStatus($data);
+
+        return redirect()->back()->with('success', 'Payment Status Updated');
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        $data = $request->all();
+        $project->update($data);
+        return $this->jsonSuccess(200, "Project Updated", new ProjectResource($project), "project");
+    }
+
+    public function rate(Request $request)
+    {
+        $data = $request->validate([
+            'star_rating' => 'numeric | required',
+            'comment' => 'required',
+            'project_id' => 'required'
+        ]);
+
+        $project = Project::where('id', $data['project_id'])->get();
+
+        $rating = ProjectRating::create([
+            'star_rating' => $data['star_rating'],
+            'comment' => $data['comment'],
+            'project_id' => $data['project_id'],
+        ]);
+
+        return $this->jsonSuccess(200, "Feedback successfully added", $rating, 'feedback');
+    }
+
+    public function contactorRequest($id)
+    {
+
+        //get auth user
+        $user = Auth::user();
+
+        $project = Project::find($id);
+
+        $request = RequestProposal::where('project_id', $project->id)->where('contractor_id', $user->id)->first();
+
+        //get proposal for existing request
+        $proposal = Proposal::where('contractor_id', $user->id)->where('project_id', $project->id)->first();
+
+        $managerChats = ManagerChat::where('accepted', true)->where('user_id', $user->id)->get();
+        return $this->jsonSuccess(200, "Request found",
+            [
+                'request' => $request,
+                'proposal' => $proposal,
+                'managerChats' => $managerChats
+            ],
+            'request');
     }
 
 }

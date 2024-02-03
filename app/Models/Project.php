@@ -57,10 +57,14 @@ class Project extends Model
         'created_at' => 'datetime:Y-m-d',
     ];
 
-
     public function projectFeedBack()
     {
         return $this->hasOne(ProjectRating::class, 'project_id', 'id');
+    }
+
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class, 'project_id', 'id');
     }
 
     //create an arry of project status
