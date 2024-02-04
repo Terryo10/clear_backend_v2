@@ -69,7 +69,7 @@ class OfferRepo implements OfferRepoInterface
 
         $data['manager_signature'] = $this->imageRepo->uploadImage( $data['manager_signature'], 'projects/offers/manager_signatures');
 
-        $offer->manager_signature = 'projects/offers/signatures/' . $imageName;
+        $offer->manager_signature =  $data['manager_signature'];
         $offer->status = "manager_signed";
         $offer->save();
 
