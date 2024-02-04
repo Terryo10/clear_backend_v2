@@ -118,6 +118,62 @@ class ProjectController extends Controller
     }
 
     public function updateProject(Request $request){
+        //update project
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+            'service_id' => 'required',
+            'street' => 'required',
+            'city' => 'required',
+            'zip_code' => 'required',
+            'budget' => 'required|numeric',
+            'frequency' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'key_factor' => 'required',
+            'additionalRequirements' => 'nullable',
+            'state' => 'nullable',
+            'user_id' => 'required|numeric',
+            'project_id' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->jsonError(401, 'Request failed. Some fields are required', $validator->errors(), 'errors');
+        }
+
+        $inputs = [
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'service_id' => $request->input('service_id'),
+            'street' => $request->input('street'),
+            'city' => $request->input('city'),
+            'zip_code' => $request->input('zip_code'),
+            'lat' => $request->input('lat'),
+            'lng' => $request->input('lng'),
+            'budget' => $request->input('budget'),
+            'frequency' => $request->input('frequency'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'key_factor' => $request->input('key_factor'),
+            'additionalRequirements' => $request->input('additionalRequirements', ''),
+            'state' => $request->input('state', ''),
+            'user_id' => $request->input('user_id')
+        ];
+
+        try {
+            $project = Project::find($request->input('project_id'));
+            $project->update($inputs);
+            $project->history()->create([
+                "status" => $project->status,
+                "user_id" => $request->input('user_id'),
+            ]);
+
+
+            return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
+        } catch (\Exception $exception) {
+            return response()->json(['status' => 402, 'message' => 'Validation failed', 'error' => $exception->getMessage()]);
+        }
+
 
     }
 
@@ -245,7 +301,7 @@ class ProjectController extends Controller
         return $this->jsonSuccess(200, 'Proposal Created', 'proposal', 'proposal');
     }
 
-    public function search(Request $request)
+    public function search(Request $request): \Illuminate\Http\JsonResponse
     {
         $search = $request->get('query');
         $status = $request->get('status');
@@ -308,7 +364,7 @@ class ProjectController extends Controller
         $project->save();
 
         $this->sendEmail('Project Updated', "Project with title " . $project->title . " status changed to " . $data['status'], $project->user->email);
-        return $this->jsonSuccess(200, 'Project Status Updated', 'project', 'project');
+        return $this->jsonSuccess(200, 'Project Status Updated', $project, 'project');
     }
 
     public function changePaymentStatus(Request $request)

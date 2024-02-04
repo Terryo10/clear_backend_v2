@@ -3,14 +3,39 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\Chat\ChatRepoInterface;
+use App\Interfaces\Images\ImageRepoInterface;
+use App\Interfaces\Notifications\NotificationRepoInterface;
+use App\Interfaces\Project\ProjectRepoInterface;
+use App\Interfaces\Proposals\RequestProposalRepoInterface;
 use App\Models\Project;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
+    public $projectRepoInterface;
+    public $imageRepoInterface;
+    public $chatRepoInterface;
+    public $notificationRepoInterface;
+    public $requestProposalRepoInterface;
+
+    public function __construct(
+        NotificationRepoInterface $notificationRepoInterface,
+        ProjectRepoInterface $projectRepoInterface,
+        ImageRepoInterface $imageRepoInterface,
+        ChatRepoInterface $chatRepoInterface,
+        RequestProposalRepoInterface $requestProposalRepoInterface
+    ) {
+        $this->projectRepoInterface = $projectRepoInterface;
+        $this->imageRepoInterface = $imageRepoInterface;
+        $this->chatRepoInterface = $chatRepoInterface;
+        $this->notificationRepoInterface = $notificationRepoInterface;
+        $this->requestProposalRepoInterface = $requestProposalRepoInterface;
+    }
     public function createProject(Request $request){
         $validator = Validator::make(
             $request->all(),
@@ -45,11 +70,26 @@ class ProjectController extends Controller
                         'body' => 'New Incoming Project Request please review',
                         'type' => 'Global',
                     ];
+                $this->notificationRepoInterface->sendEmailNotification(
+                    [
+                        'subject' => 'Project Request Sent',
+                        'email_message' => env('NEW_REQUEST_STRING'),
+                        'email' => $project->user->email,
+                    ]
+                );
                 $this->broadcastNotification(
                     [Auth::user()->id], $notification);
+                $this->projectRepoInterface->createProjectHistory($project, $project->status, 'Project Created');
+
+                $chat = $this->chatRepoInterface->createChat([
+                    'name' => $project->title,
+                    'project_id' => $project->id,
+                ]);
+
+                $this->chatRepoInterface->addUsersToChat($chat, [$project->user]);
                 return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
-            }catch (\Exception $exception) {
-                return response()->json(['status' => 401, 'message' => "Error", $exception]);
+            }catch (Exception $exception) {
+                return response()->json(['status' => 401, 'message' => "Error", "errors" => $exception->getMessage()]);
             }
         }
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('message');
             $table->string('attachement')->nullable();
-            $table->foreignId('chat_id')->constrained('chats')->onDelete('cascade');
+            $table->foreignId('group_chat_id')->constrained('group_chats')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

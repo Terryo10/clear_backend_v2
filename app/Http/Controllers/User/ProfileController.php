@@ -60,7 +60,7 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        $user = User::find($request->user_id);
+        $user = User::findOrfail($request->user_id);
         $userData = $request->only([
             'first_name',
             'last_name',
@@ -88,8 +88,6 @@ class ProfileController extends Controller
             'work_city',
             'work_state',
             'work_zip_code',
-            'about',
-            'color'
         ]);
         if (!$user->profile) {
             $user->profile()->create($profileData);

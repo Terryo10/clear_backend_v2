@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ChatResource;
+use App\Http\Resources\ManagerChatResource;
 use App\Models\ChatUser;
 use App\Models\GroupChat;
 use App\Models\ManagerChat;
 use App\Models\ManagerChatMessage;
 use App\Models\Message;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,18 +22,29 @@ class ChatController extends Controller
         $chatRequests = ManagerChat::where('accepted', false)->get();
         $managerChats = ManagerChat::where('accepted', true)->where('manager_id', auth()->user()->id)->get();
 
-        return $this->jsonSuccess(200, 'Chat Request Send Clear Manager Will contact you soon', [
+        return $this->jsonSuccess(200, 'Chats fetched successfully', [
             'chats' => ChatResource::collection($chats),
             'chatRequests' => ManagerChatResource::collection($chatRequests),
             'managerChats' => ManagerChatResource::collection($managerChats),
         ], 'manager_chat');
     }
+
+    public function getChatMessages(Request $request)
+    {
+        $chat = GroupChat::find($request->chat_id);
+        $messages = Message::where('group_chat_id', $chat->id)->orderBy('created_at', 'ASC')->get();
+
+        return $this->jsonSuccess(200, 'Messages fetched successfully', [
+            'messages' => $messages,
+        ], 'chat_messages');
+    }
+
     public function searchChats(Request $request)
     {
         $userSearch = $request->search;
 
 
-        $chats = Chat::where('name', 'like', '%' . $request->search . '%')->get();
+        $chats = GroupChat::where('name', 'like', '%' . $request->search . '%')->get();
 
         //search manager chat byt user first name and last name
         $managerChats = ManagerChat::whereHas('user', function ($query) use ($userSearch) {

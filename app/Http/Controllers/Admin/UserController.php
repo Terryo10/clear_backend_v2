@@ -55,7 +55,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
     }
 
     /**
@@ -75,8 +75,9 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
+        $user->update([
+            'password' => Hash::make($request->input('password')),
+        ]);
 
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
 

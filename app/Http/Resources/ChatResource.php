@@ -17,10 +17,10 @@ class ChatResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'project' => $this->project,
+            'project' => $this->project->id,
             'users' => $this->users,
             "isGroup" => true,
-            'messages' => MessageResource::collection($this->messages),
+//            'messages' => MessageResource::collection($this->messages),
             "lastMessage" => new MessageResource($this->getLastMessage()),
             'isUserInChat' => $this->isUserInChat(),
             'accepted'  =>  true,

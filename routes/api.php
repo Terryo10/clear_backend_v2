@@ -53,6 +53,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::resource('/admin/service', ServiceController::class);
     Route::resource('/admin/projects', ProjectController::class);
     Route::post('/admin/update-project-status', [ProjectController::class, 'updateStatus']);
+    Route::post('/admin/update-project', [ProjectController::class, 'updateProject']);
     Route::get('/admin/requests', [ProjectController::class, 'getRequests']);
     Route::post('admin/project-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
     Route::get('admin/key_factors',[KeyFactorsController::class, 'index']);
@@ -60,6 +61,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('admin/key_factors',[KeyFactorsController::class, 'store']);
     Route::delete('admin/key_factors/{id}',[KeyFactorsController::class, 'destroy']);
     Route::resource('admin/users', UserController::class);
+    Route::post('admin/users/password/{id}', [UserController::class,'update']);
     Route::post('admin/remove-contractor-request-for-proposal', [ProjectController::class,'removeContractorRequestForProposal']);
     Route::post('admin/send-proposal-to-contractor',[ProjectController::class, 'sendProjectToContractors']);
     Route::get('admin/contractors',[UserController::class, 'getContractors']);
@@ -74,6 +76,38 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::resource('/sliders', SliderController::class);
     Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
+        //ADMIN CHAT ROUTES
+        Route::post('messages/{chat}', [MessageController::class, 'adminSendMessage']);
+        Route::post('chatRequests/{managerChat}/messages', [ManagerChatMessageController::class, 'adminSendMessage']);
+
+        Route::prefix('admin/chats')->group(function () {
+            Route::get('/', [ChatController::class, 'adminIndex']);
+            Route::post('/refresh', [ChatController::class, 'refresh']);
+            Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
+            Route::post('/{chat}/users', [ChatController::class, 'addUsers']);
+            Route::delete('/{chat}/users', [ChatController::class, 'removeUsers']);
+            Route::delete('/{chat}', [ChatController::class, 'delete']);
+        });
+
+        Route::prefix('admin/messages')->group(function () {
+            Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
+            Route::delete('delete', [ChatController::class, 'deleteMessage']);
+        });
+
+        Route::prefix('admin/notifications')->group(function () {
+            Route::get('', [NotificationController::class, 'getAdminNotifications']);
+            Route::get('getUserNotifications', [NotificationController::class, 'getUserNotifications']);
+            Route::post('readAll', [NotificationController::class, 'readAllNotifications']);
+            Route::post('readAllAdmin', [NotificationController::class, 'readAllAdminNotifications']);
+            Route::post('read', [NotificationController::class, 'readNotification']);
+        });
+
+        Route::prefix('admin/chatRequests')->group(function () {
+            Route::post('/{managerChat}', [ManagerChatController::class, 'acceptChatRequest']);
+            Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
+        });
+        Route::post('admin/chatRequests', [ManagerChatController::class, 'storeWeb']);
+
 });
 
 //USER
@@ -91,6 +125,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
     Route::post('project-rating', [ProjectController::class, 'rate']);
     Route::get('user-dashboard', [\App\Http\Controllers\DashboardController::class, 'user'])->name('user');
+    Route::post('user-profile', [ProfileController::class, 'update']);
 
 
 });
@@ -132,6 +167,7 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
 
 });
 
+//for contractor and user
 Route::group(['prefix' => 'chatRequests', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/', [ManagerChatController::class, 'store']);
     Route::get('/{managerChat}', [ManagerChatController::class, 'show']);

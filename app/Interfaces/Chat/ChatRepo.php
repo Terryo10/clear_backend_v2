@@ -40,7 +40,7 @@ class ChatRepo implements ChatRepoInterface
     public function addUserToChat(GroupChat $chat, User $user)
     {
         return ChatUser::create([
-            'chat_id' => $chat->id,
+            'group_chat_id' => $chat->id,
             'user_id' => $user->id
         ]);
     }
@@ -56,7 +56,7 @@ class ChatRepo implements ChatRepoInterface
     {
         foreach ($users as $user) {
             ChatUser::create([
-                'chat_id' => $chat->id,
+                'group_chat_id' => $chat->id,
                 'user_id' => $user->id
             ]);
         }
