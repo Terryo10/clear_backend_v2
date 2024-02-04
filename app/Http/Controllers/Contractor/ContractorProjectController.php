@@ -18,4 +18,11 @@ class ContractorProjectController extends Controller
         return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', $projects, 'projects');
     }
 
+    public function contactorProject($id)
+    {
+        $project = Project::findOrfail($id);
+
+        return $this->jsonSuccess(200, 'Proposal Requests Contractor Removed', $project, 'project');
+    }
+
 }

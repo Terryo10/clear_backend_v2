@@ -10,4 +10,5 @@ class RequestProposal extends Model
     protected $guarded;
 
     use HasFactory;
+
 }

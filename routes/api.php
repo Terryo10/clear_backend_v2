@@ -134,7 +134,9 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 
 Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function () {
     Route::post('contractor/sent-proposal-to-user', [ProjectController::class,'sendProposal']);
+    Route::get('contractor/project/{id}', [ContractorProjectController::class,'contactorProject']);
     Route::get('contractor/projects', [ContractorProjectController::class,'contactorProjects']);
+
     Route::prefix('contractor')->group(function () {
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'contractor'])->name('contractor');
 
