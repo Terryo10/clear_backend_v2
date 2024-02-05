@@ -20,7 +20,9 @@ class ChatResource extends JsonResource
             'project' => $this->project->id,
             'users' => $this->users,
             "isGroup" => true,
-//            'messages' => MessageResource::collection($this->messages),
+            //paginate the messages
+            'messages' => MessageResource::collection($this->messages()->paginate(10)),
+
             "lastMessage" => new MessageResource($this->getLastMessage()),
             'isUserInChat' => $this->isUserInChat(),
             'accepted'  =>  true,

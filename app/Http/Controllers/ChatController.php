@@ -65,19 +65,18 @@ class ChatController extends Controller
     public function contractorIndex(Request $request)
     {
         $user = Auth::user();
-        $chats = Chat::whereHas('users', function ($query) use ($user) {
+        $chats = GroupChat::whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
         $chatRequests = ManagerChat::where('accepted', false)->get();
         $managerChats = ManagerChat::where('user_id', $user->id)->get();
 
 
-        return Inertia::render('Contractor/Chat', [
+        return $this->jsonSuccess(200, 'Chats fetched successfully', [
             'chats' => ChatResource::collection($chats),
-            'users' => UserResource::collection(User::all()),
             'chatRequests' => ManagerChatResource::collection($chatRequests),
             'managerChats' => ManagerChatResource::collection($managerChats),
-        ]);
+        ], 'manager_chat');
     }
     public function clientIndex(Request $request)
     {
@@ -91,14 +90,13 @@ class ChatController extends Controller
         $projectGroupByMonth = Project::selectRaw('sum(budget) as total, MONTH(created_at) as month')->groupBy('month')->get();
         $lastRequests = Project::where('user_id', $user->id)->orderBy('created_at', 'desc')->take(5)->get();
 
-        return Inertia::render('Client/Chat', [
+        return $this->jsonSuccess(200, 'Chats fetched successfully', [
             'chats' => ChatResource::collection($chats),
-            'users' => UserResource::collection(User::all()),
             'chatRequests' => ManagerChatResource::collection($chatRequests),
             'managerChats' => ManagerChatResource::collection($managerChats),
-            "lastRequests" => ProjectResource::collection($lastRequests),
-            "projectGroupByMonth" => $projectGroupByMonth,
-        ]);
+            'projectGroupByMonth' => $projectGroupByMonth,
+            'lastRequests' => $lastRequests,
+        ], 'manager_chat');
     }
     public function refresh(Request $request)
     {
@@ -107,7 +105,7 @@ class ChatController extends Controller
 
     public function store(Request $request, Project $project)
     {
-        $chat = Chat::create([
+        $chat = GroupChat::create([
             'name' => $project->title,
             'project_id' => $project->id,
         ]);
@@ -119,7 +117,7 @@ class ChatController extends Controller
     }
 
     // create function to add users to a chat
-    public function addUsers(Request $request, Chat $chat)
+    public function addUsers(Request $request, GroupChat $chat)
     {
         //check if user is in the chat
         $chatUser = ChatUser::where('user_id', $request->user_id)->where('chat_id', $chat->id)->first();
@@ -134,7 +132,7 @@ class ChatController extends Controller
     }
 
     // create function to remove users from a chat
-    public function removeUsers(Request $request, Chat $chat)
+    public function removeUsers(Request $request, GroupChat $chat)
     {
         //check if request has users
         ChatUser::where('user_id', $request->user_id)->where('chat_id', $chat->id)->delete();
@@ -142,7 +140,7 @@ class ChatController extends Controller
     }
 
     // create function to delete a chat
-    public function delete(Chat $chat)
+    public function delete(GroupChat $chat)
     {
         $chat->delete();
         return $this->jsonSuccess(200, "Chat Deleted", null, "chat");
@@ -152,7 +150,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $chats = Chat::whereHas('users', function ($query) use ($user) {
+        $chats = GroupChat::whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
 
@@ -163,7 +161,7 @@ class ChatController extends Controller
     }
 
     // create function to get a single chat
-    public function show(Chat $chat)
+    public function show(GroupChat $chat)
     {
         return $this->jsonSuccess(200, "Chat Retrieved", new ChatResource($chat), "chat");
     }

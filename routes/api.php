@@ -127,6 +127,13 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::get('user-dashboard', [\App\Http\Controllers\DashboardController::class, 'user'])->name('user');
     Route::post('user-profile', [ProfileController::class, 'update']);
 
+    Route::group(['prefix' => 'chats',], function () {
+        Route::post('/{project}', [ChatController::class, 'store']);
+        Route::get('/', [ChatController::class, 'index']);
+        Route::post('/{chat}/messages', [MessageController::class, 'store']);
+        Route::get('/{chat}', [ChatController::class, 'show']);
+    });
+
 
 });
 

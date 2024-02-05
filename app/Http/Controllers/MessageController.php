@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Http\Resources\MessageResource;
 use App\Models\GroupChat;
 use App\Models\Message;
 use Illuminate\Http\Request;
-use Illuminate\Mail\Events\MessageSent;
+
 
 class MessageController extends Controller
 {
@@ -52,15 +53,12 @@ class MessageController extends Controller
             $file = $request->file('attachement');
             $fileType = $file->getMimeType();
 
-            // dd($fileType);
-
             //change file extension to mp3 before storing
             //generate random string to append to file name
             $randomString = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
             $file->move(public_path('/storage/chat/messages'), $randomString . $file->getClientOriginalName());
             $path = 'chat/messages/' . $randomString . $file->getClientOriginalName();
 
-            // $path = $request->file('attachement')->store('chat/messages', ['disk' =>   'public']);
             $data['attachement'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
@@ -75,21 +73,7 @@ class MessageController extends Controller
             ];
 
         broadcast(new MessageSent($messageToEvent))->toOthers();
-        // $notification =
-        //     [
-        //         'title' => 'New Message',
-        //         'body' => 'New message from ' . auth()->user()->first_name . ' ' . auth()->user()->last_name,
-        //         'type' => 'Chat Message',
-        //     ];
-        // dd($notification);
-        // $users = $chat->users;
 
-        //remove the current user from the users array
-        // $users = $users->filter(function ($value, $key) {
-        //     return $value->id != auth()->user()->id;
-        // });
-
-        // $this->broadcastNotification($chat->users, $notification);
         return $this->jsonSuccess(200, "Message sent", new MessageResource($message), "message");
     }
 
