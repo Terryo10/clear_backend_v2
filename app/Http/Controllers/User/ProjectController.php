@@ -79,8 +79,8 @@ class ProjectController extends Controller
                 );
                 $this->broadcastNotification(
                     [Auth::user()->id], $notification);
+                $project->setProjectStatus('request_for_bids_received');
                 $this->projectRepoInterface->createProjectHistory($project, $project->status, 'Project Created');
-
                 $chat = $this->chatRepoInterface->createChat([
                     'name' => $project->title,
                     'project_id' => $project->id,
