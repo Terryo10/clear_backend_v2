@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\Proposals;
 
+use App\Http\Resources\RequestProposalResource;
 use App\Interfaces\Chat\ChatRepoInterface;
 use App\Interfaces\Images\ImageRepoInterface;
 use App\Interfaces\Notifications\NotificationRepoInterface;
@@ -62,9 +63,11 @@ class RequestProposalRepo implements RequestProposalRepoInterface
     //get all request proposal for a contractor
     public function getRequestProposals($contractor_id)
     {
-        return RequestProposal::where('contractor_id', $contractor_id)
+        $proposals = RequestProposal::where('contractor_id', $contractor_id)
             ->orderBy('created_at', 'DESC')
-            ->paginate(20);
+            ->paginate(10);
+
+        return RequestProposalResource::collection($proposals);
     }
 
     public function createProposal(array $data)

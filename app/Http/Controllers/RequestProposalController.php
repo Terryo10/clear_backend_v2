@@ -16,15 +16,7 @@ class RequestProposalController extends Controller
     }
     public function index()
     {
-        $requests = $this->requestProposalRepoInterface->getRequestProposals(auth()->user()->id);
-
-        $managerChats = ManagerChat::where('accepted', true)->where('user_id', auth()->user()->id)->get();
-        return  $this->jsonSuccess(200, 'Request Proposals',
-            [
-                'requests' => $requests,
-                'managerChats'=> $managerChats
-            ], 'data' );
-
+        return $this->requestProposalRepoInterface->getRequestProposals(auth()->user()->id);
     }
 
     public function store(Request $request)

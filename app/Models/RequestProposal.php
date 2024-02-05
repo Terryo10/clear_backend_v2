@@ -11,4 +11,9 @@ class RequestProposal extends Model
 
     use HasFactory;
 
+    public function contractor()
+    {
+        return $this->belongsTo(User::class, 'contractor_id');
+    }
+
 }

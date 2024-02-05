@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('request_proposals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('contractor_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+            $table->unsignedBigInteger('project_id');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->text('description');
             $table->string('status')->default('Sent');
             $table->timestamps();

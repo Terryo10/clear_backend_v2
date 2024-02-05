@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,8 +18,8 @@ class RequestProposalResource extends JsonResource
         return [
             'id' => $this->id,
             'contractor' => $this->contractor,
-            'decription' => $this->description,
-            'project' => $this->project,
+            'description' => $this->description,
+            'project' => Project::find($this->project_id),
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
