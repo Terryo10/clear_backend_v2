@@ -79,7 +79,7 @@ class MessageController extends Controller
 
     //create function to broadcast notification to users
 
-    public function adminSendMessage(Request $request, Chat $chat)
+    public function adminSendMessage(Request $request, GroupChat $chat)
     {
         // $request->validate([
         //     'attachement' => 'mimes:mp3,mp4,doc,docx,pdf,txt,jpg,jpeg,png'

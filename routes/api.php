@@ -77,7 +77,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
         //ADMIN CHAT ROUTES
-        Route::post('messages/{chat}', [MessageController::class, 'adminSendMessage']);
+        Route::post('admin/messages/{chat}', [MessageController::class, 'adminSendMessage']);
         Route::post('chatRequests/{managerChat}/messages', [ManagerChatMessageController::class, 'adminSendMessage']);
 
         Route::prefix('admin/chats')->group(function () {

@@ -120,7 +120,7 @@ class ChatController extends Controller
     public function addUsers(Request $request, GroupChat $chat)
     {
         //check if user is in the chat
-        $chatUser = ChatUser::where('user_id', $request->user_id)->where('chat_id', $chat->id)->first();
+        $chatUser = ChatUser::where('user_id', $request->user_id)->where('group_chat_id', $chat->id)->first();
         if ($chatUser) {
             return back()->with('message', 'User already in chat');
         }
@@ -135,7 +135,7 @@ class ChatController extends Controller
     public function removeUsers(Request $request, GroupChat $chat)
     {
         //check if request has users
-        ChatUser::where('user_id', $request->user_id)->where('chat_id', $chat->id)->delete();
+        ChatUser::where('user_id', $request->user_id)->where('group_chat_id', $chat->id)->delete();
         return back()->with('message', 'User removed from chat successfully');
     }
 
@@ -179,14 +179,16 @@ class ChatController extends Controller
         //check if user is already in chat
         $user = Auth::user();
 
-        $chatUser = ChatUser::where('user_id', $user->id)->where('chat_id', $chat->id)->first();
+        $chatUser = ChatUser::where('user_id', $user->id)->where('group_chat_id', $chat->id)->first();
         if ($chatUser) {
-            return back()->with('message', 'You are already in this chat');
+            return $this->jsonError(400, "You are already in this chat", null, "chat");
+
         }
         $chat->users()->create([
             'user_id' => $user->id,
         ]);
-        return back()->with('message', 'Joined Chat Successfully.');
+        return  $this->jsonSuccess(200, "Joined Chat", new ChatResource($chat), "chat");
+
     }
 
     public function deleteMessage(Request $request)
@@ -203,7 +205,6 @@ class ChatController extends Controller
             $message = ManagerChatMessage::find($data['id']);
             $message->delete();
         }
-
-        return redirect()->back()->with('success', 'Message Deleted Successfully');
+        return $this->jsonSuccess(200, "Message Deleted", null, "chat");
     }
 }

@@ -16,7 +16,7 @@ class RequestProposalController extends Controller
     }
     public function index()
     {
-        return $this->requestProposalRepoInterface->getRequestProposals(auth()->user()->id);
+        return $this->jsonSuccess(200, 'Request Successful',$this->requestProposalRepoInterface->getRequestProposals(auth()->user()->id), 'requests');
     }
 
     public function store(Request $request)
