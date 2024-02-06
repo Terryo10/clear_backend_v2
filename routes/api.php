@@ -70,7 +70,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
         Route::get('/{projectOffer}', [ProjectOfferController::class, 'show']);
         Route::post('/sign-offer-admin', [ProjectOfferController::class, 'accept']);
         Route::delete('/delete/{id}', [ProjectOfferController::class, 'delete']);
-        Route::put('/update/{id}', [ProjectOfferController::class, 'update']);
+        Route::post('/update/{id}', [ProjectOfferController::class, 'update']);
     });
     Route::get('admin/project-search', [ProjectController::class, 'search']);
     Route::resource('/sliders', SliderController::class);
@@ -162,7 +162,7 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
             Route::get('/', [RequestProposalController::class, 'index'])->name('contractor.requests');
             Route::get('/{id}', [ProjectController::class, 'contactorRequest'])->name('contractor.request');
             Route::post('/send-proposal', [ProposalController::class, 'store']);
-            Route::patch('/update-proposal', [ProposalController::class, 'update']);
+            Route::post('/update-proposal', [ProposalController::class, 'update']);
             Route::post('/withdraw-proposal', [ProposalController::class, 'destroy']);
         });
         Route::prefix('projects')->group(function () {
