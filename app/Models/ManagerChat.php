@@ -41,7 +41,7 @@ class ManagerChat extends Model
     public function isUserInChat()
     {
         $user = Auth::user();
-        return $user->hasRole('admin') ?
+        return $user->role == 'ADMIN' ?
             ManagerChat::where('manager_id', $user->id)->exists()
             : ManagerChat::where('user_id', $user->id)->exists();
     }

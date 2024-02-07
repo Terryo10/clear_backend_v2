@@ -77,9 +77,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
         //ADMIN CHAT ROUTES
-        Route::post('admin/messages/{chat}', [MessageController::class, 'adminSendMessage']);
-        Route::post('chatRequests/{managerChat}/messages', [ManagerChatMessageController::class, 'adminSendMessage']);
-
+    Route::post('admin/messages/{chat}', [MessageController::class, 'adminSendMessage']);
         Route::prefix('admin/chats')->group(function () {
             Route::get('/', [ChatController::class, 'adminIndex']);
             Route::post('/refresh', [ChatController::class, 'refresh']);
@@ -107,6 +105,8 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
             Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
         });
         Route::post('admin/chatRequests', [ManagerChatController::class, 'storeWeb']);
+        Route::post('send-message-admin-manager', [ManagerChatMessageController::class, 'adminSendMessage']);
+
 
 });
 
@@ -115,8 +115,8 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::get('services',[ServiceController::class, 'index']);
     Route::get('key_factors',[KeyFactorController::class, 'getKeyFactors']);
     Route::get('frequencies',[KeyFactorController::class, 'getFrequencies']);
-    Route::get('updateProfilePicture',[ProfileController::class, 'updateProfilePicture']);
-    Route::get('updatePassword',[ProfileController::class, 'updateUserPassword']);
+    Route::post('updateProfilePicture',[ProfileController::class, 'updateProfilePicture']);
+    Route::post('updatePassword',[ProfileController::class, 'updateUserPassword']);
     Route::post('request_service', [\App\Http\Controllers\User\ProjectController::class, 'createProject']);
     Route::get('user_projects',[\App\Http\Controllers\User\ProjectController::class, 'clientProjects']);
     Route::get('user_requests',[\App\Http\Controllers\User\ProjectController::class, 'clientRequests']);
@@ -134,7 +134,13 @@ Route::middleware(['Auth:sanctum'])->group(function () {
         Route::get('/{chat}', [ChatController::class, 'show']);
     });
 
-
+    //for contractor and user
+    Route::group(['prefix' => 'chatRequests'], function () {
+        Route::post('/', [ManagerChatController::class, 'store']);
+        Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
+        Route::get('/', [ManagerChatController::class, 'index']);
+        Route::post('/{managerChat}/messages', [ManagerChatMessageController::class, 'store']);
+    });
 });
 
 //Contractor
@@ -176,10 +182,4 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
 
 });
 
-//for contractor and user
-Route::group(['prefix' => 'chatRequests', 'middleware' => 'auth:sanctum'], function () {
-    Route::post('/', [ManagerChatController::class, 'store']);
-    Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
-    Route::get('/', [ManagerChatController::class, 'index']);
-    Route::post('/{managerChat}/messages', [ManagerChatMessageController::class, 'store']);
-});
+

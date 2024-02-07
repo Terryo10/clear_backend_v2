@@ -376,7 +376,7 @@ class ProjectController extends Controller
 
         $this->projectRepoInterface->changePaymentStatus($data);
 
-        return redirect()->back()->with('success', 'Payment Status Updated');
+        return $this->jsonSuccess(200, 'Payment Status Updated', $data, 'payment');
     }
 
     public function update(Request $request, Project $project)

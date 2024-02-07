@@ -118,7 +118,7 @@ class MessageController extends Controller
             ];
 
         broadcast(new MessageSent($messageToEvent))->toOthers();
-        return  $this->jsonSuccess(200, "Message sent", "message", "message");
+        return  $this->jsonSuccess(200, "Message sent",new MessageResource($message) , "message");
 
 
     }

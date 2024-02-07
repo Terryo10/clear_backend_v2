@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
+use App\Http\Resources\ManagerChatMessageResource;
+use App\Http\Resources\ManagerChatResource;
 use App\Models\ManagerChat;
 use App\Models\ManagerChatMessage;
 use Illuminate\Http\Request;
-use Illuminate\Mail\Events\MessageSent;
 
 class ManagerChatMessageController extends Controller
 {
@@ -73,11 +75,12 @@ class ManagerChatMessageController extends Controller
 
     public function adminSendMessage(Request $request, ManagerChat $chat)
     {
+
         $data = $request->validate([
             'message' => 'required',
             'id' => 'required',
         ]);
-        $chat = ManagerChat::find($data['id']);
+        $chat = ManagerChat::findOrfail($data['id']);
 
         //store message file
         if ($request->hasFile('attachement')) {
@@ -103,7 +106,8 @@ class ManagerChatMessageController extends Controller
                 'user_id' => auth()->user()->id,
             ];
         broadcast(new MessageSent($messageToEvent))->toOthers();
-        return  $this->jsonSuccess(200, "ManagerChatMessage sent", null, "message");
+
+        return  $this->jsonSuccess(200, "ManagerChatMessage sent",new ManagerChatMessageResource($message) , "message");
     }
 
     public function storeContractorMessage(Request $request, ManagerChat $chat)
