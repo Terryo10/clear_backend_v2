@@ -30,7 +30,7 @@ class ProfileController extends Controller
             $user->profile_photo_path = $fileName;
             $user->save();
 
-            return response()->json(['message' => 'Profile picture updated successfully']);
+            return $this->jsonSuccess(200, "Profile picture updated successfully", $user, "user");
         }
 
         return response()->json(['message' => 'Failed to update profile picture'], 400);
