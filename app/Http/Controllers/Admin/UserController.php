@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -17,7 +18,6 @@ class UserController extends Controller
         $users = User::paginate(20);
 
         return $this->jsonSuccess(200, 'Request Successful', $users, 'users');
-
     }
 
     /**
@@ -50,6 +50,11 @@ class UserController extends Controller
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
     }
 
+    public function getUser(Request $request)
+    {
+        $user = User::where("email", Auth::user()->email)->first();
+        return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
+    }
     /**
      * Display the specified resource.
      */
@@ -80,7 +85,6 @@ class UserController extends Controller
         ]);
 
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
-
     }
 
     /**
@@ -104,13 +108,14 @@ class UserController extends Controller
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
     }
 
-    public function getContractors(){
-        $contractors = User::where('role','=','CONTRACTOR')->get();
+    public function getContractors()
+    {
+        $contractors = User::where('role', '=', 'CONTRACTOR')->get();
         return $this->jsonSuccess(200, 'Request Successful', $contractors, 'contractors');
-
     }
 
-    public function updateProfile(Request $request){
+    public function updateProfile(Request $request)
+    {
         //write code to update profile
 
     }

@@ -56,15 +56,15 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('/admin/update-project', [ProjectController::class, 'updateProject']);
     Route::get('/admin/requests', [ProjectController::class, 'getRequests']);
     Route::post('admin/project-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
-    Route::get('admin/key_factors',[KeyFactorsController::class, 'index']);
-    Route::put('admin/key_factors/{id}',[KeyFactorsController::class, 'update']);
-    Route::post('admin/key_factors',[KeyFactorsController::class, 'store']);
-    Route::delete('admin/key_factors/{id}',[KeyFactorsController::class, 'destroy']);
+    Route::get('admin/key_factors', [KeyFactorsController::class, 'index']);
+    Route::put('admin/key_factors/{id}', [KeyFactorsController::class, 'update']);
+    Route::post('admin/key_factors', [KeyFactorsController::class, 'store']);
+    Route::delete('admin/key_factors/{id}', [KeyFactorsController::class, 'destroy']);
     Route::resource('admin/users', UserController::class);
-    Route::post('admin/users/password/{id}', [UserController::class,'update']);
-    Route::post('admin/remove-contractor-request-for-proposal', [ProjectController::class,'removeContractorRequestForProposal']);
-    Route::post('admin/send-proposal-to-contractor',[ProjectController::class, 'sendProjectToContractors']);
-    Route::get('admin/contractors',[UserController::class, 'getContractors']);
+    Route::post('admin/users/password/{id}', [UserController::class, 'update']);
+    Route::post('admin/remove-contractor-request-for-proposal', [ProjectController::class, 'removeContractorRequestForProposal']);
+    Route::post('admin/send-proposal-to-contractor', [ProjectController::class, 'sendProjectToContractors']);
+    Route::get('admin/contractors', [UserController::class, 'getContractors']);
     Route::prefix('admin/offers')->group(function () {
         Route::post('/', [ProjectOfferController::class, 'store']);
         Route::get('/{projectOffer}', [ProjectOfferController::class, 'show']);
@@ -76,51 +76,50 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::resource('/sliders', SliderController::class);
     Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
-        //ADMIN CHAT ROUTES
+    //ADMIN CHAT ROUTES
     Route::post('admin/messages/{chat}', [MessageController::class, 'adminSendMessage']);
-        Route::prefix('admin/chats')->group(function () {
-            Route::get('/', [ChatController::class, 'adminIndex']);
-            Route::post('/refresh', [ChatController::class, 'refresh']);
-            Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
-            Route::post('/{chat}/users', [ChatController::class, 'addUsers']);
-            Route::delete('/{chat}/users', [ChatController::class, 'removeUsers']);
-            Route::delete('/{chat}', [ChatController::class, 'delete']);
-        });
+    Route::prefix('admin/chats')->group(function () {
+        Route::get('/', [ChatController::class, 'adminIndex']);
+        Route::post('/refresh', [ChatController::class, 'refresh']);
+        Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
+        Route::post('/{chat}/users', [ChatController::class, 'addUsers']);
+        Route::delete('/{chat}/users', [ChatController::class, 'removeUsers']);
+        Route::delete('/{chat}', [ChatController::class, 'delete']);
+    });
 
-        Route::prefix('admin/messages')->group(function () {
-            Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
-            Route::delete('delete', [ChatController::class, 'deleteMessage']);
-        });
+    Route::prefix('admin/messages')->group(function () {
+        Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
+        Route::delete('delete', [ChatController::class, 'deleteMessage']);
+    });
 
-        Route::prefix('admin/notifications')->group(function () {
-            Route::get('', [NotificationController::class, 'getAdminNotifications']);
-            Route::get('getUserNotifications', [NotificationController::class, 'getUserNotifications']);
-            Route::post('readAll', [NotificationController::class, 'readAllNotifications']);
-            Route::post('readAllAdmin', [NotificationController::class, 'readAllAdminNotifications']);
-            Route::post('read', [NotificationController::class, 'readNotification']);
-        });
+    Route::prefix('admin/notifications')->group(function () {
+        Route::get('', [NotificationController::class, 'getAdminNotifications']);
+        Route::get('getUserNotifications', [NotificationController::class, 'getUserNotifications']);
+        Route::post('readAll', [NotificationController::class, 'readAllNotifications']);
+        Route::post('readAllAdmin', [NotificationController::class, 'readAllAdminNotifications']);
+        Route::post('read', [NotificationController::class, 'readNotification']);
+    });
 
-        Route::prefix('admin/chatRequests')->group(function () {
-            Route::post('/{managerChat}', [ManagerChatController::class, 'acceptChatRequest']);
-            Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
-        });
-        Route::post('admin/chatRequests', [ManagerChatController::class, 'storeWeb']);
-        Route::post('send-message-admin-manager', [ManagerChatMessageController::class, 'adminSendMessage']);
-
-
+    Route::prefix('admin/chatRequests')->group(function () {
+        Route::post('/{managerChat}', [ManagerChatController::class, 'acceptChatRequest']);
+        Route::get('/{managerChat}', [ManagerChatController::class, 'show']);
+    });
+    Route::post('admin/chatRequests', [ManagerChatController::class, 'storeWeb']);
+    Route::post('send-message-admin-manager', [ManagerChatMessageController::class, 'adminSendMessage']);
 });
 
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
-    Route::get('services',[ServiceController::class, 'index']);
-    Route::get('key_factors',[KeyFactorController::class, 'getKeyFactors']);
-    Route::get('frequencies',[KeyFactorController::class, 'getFrequencies']);
-    Route::post('updateProfilePicture',[ProfileController::class, 'updateProfilePicture']);
-    Route::post('updatePassword',[ProfileController::class, 'updateUserPassword']);
+    Route::get('services', [ServiceController::class, 'index']);
+    Route::post('userProfile', [UserController::class, 'getUser']);
+    Route::get('key_factors', [KeyFactorController::class, 'getKeyFactors']);
+    Route::get('frequencies', [KeyFactorController::class, 'getFrequencies']);
+    Route::post('updateProfilePicture', [ProfileController::class, 'updateProfilePicture']);
+    Route::post('updatePassword', [ProfileController::class, 'updateUserPassword']);
     Route::post('request_service', [\App\Http\Controllers\User\ProjectController::class, 'createProject']);
-    Route::get('user_projects',[\App\Http\Controllers\User\ProjectController::class, 'clientProjects']);
-    Route::get('user_requests',[\App\Http\Controllers\User\ProjectController::class, 'clientRequests']);
-    Route::post('upload-images',[ProjectController::class, 'uploadImagesFromAdmin']);
+    Route::get('user_projects', [\App\Http\Controllers\User\ProjectController::class, 'clientProjects']);
+    Route::get('user_requests', [\App\Http\Controllers\User\ProjectController::class, 'clientRequests']);
+    Route::post('upload-images', [ProjectController::class, 'uploadImagesFromAdmin']);
     Route::post('/sign-offer/{id}', [ProjectOfferController::class, 'sign']);
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
     Route::post('project-rating', [ProjectController::class, 'rate']);
@@ -146,9 +145,9 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 //Contractor
 
 Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function () {
-    Route::post('contractor/sent-proposal-to-user', [ProjectController::class,'sendProposal']);
-    Route::get('contractor/project/{id}', [ContractorProjectController::class,'contactorProject']);
-    Route::get('contractor/projects', [ContractorProjectController::class,'contactorProjects']);
+    Route::post('contractor/sent-proposal-to-user', [ProjectController::class, 'sendProposal']);
+    Route::get('contractor/project/{id}', [ContractorProjectController::class, 'contactorProject']);
+    Route::get('contractor/projects', [ContractorProjectController::class, 'contactorProjects']);
 
     Route::prefix('contractor')->group(function () {
         Route::get('/', [\App\Http\Controllers\DashboardController::class, 'contractor'])->name('contractor');
@@ -178,8 +177,4 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
             Route::get('', [NotificationController::class, 'getNotifications']);
         });
     });
-
-
 });
-
-
