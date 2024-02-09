@@ -87,6 +87,19 @@ class UserController extends Controller
 
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
     }
+    public function updateEdit(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $request->validate([
+            'password' => 'required|string|min:4',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        return $this->jsonSuccess(200, 'User Password Changed Successful', $user, 'user');
+    }
 
     /**
      * Remove the specified resource from storage.
