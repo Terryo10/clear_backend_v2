@@ -37,13 +37,14 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:4',
         ]);
 
         $user = User::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
+            'role' => $request->input('role'),
             'password' => Hash::make($request->input('password')),
         ]);
 
