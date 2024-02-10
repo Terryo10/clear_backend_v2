@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ChatResource;
 use App\Http\Resources\ManagerChatResource;
+use App\Http\Resources\MessageResource;
 use App\Models\ChatUser;
 use App\Models\GroupChat;
 use App\Models\ManagerChat;
@@ -29,14 +30,22 @@ class ChatController extends Controller
         ], 'manager_chat');
     }
 
-    public function getChatMessages(Request $request)
+    public function getChatMessages($id)
     {
-        $chat = GroupChat::find($request->chat_id);
-        $messages = Message::where('group_chat_id', $chat->id)->orderBy('created_at', 'ASC')->get();
+        $messages = Message::where('group_chat_id', $id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
 
-        return $this->jsonSuccess(200, 'Messages fetched successfully', [
-            'messages' => $messages,
-        ], 'chat_messages');
+        $messages = $messages->reverse();
+
+        return MessageResource::collection($messages);
+    }
+
+    public function getManagerChatMessages($id)
+    {
+        $messages = ManagerChatMessage::where('manager_chat_id', $id)->orderBy('created_at', 'DESC')->paginate(10);
+        $messages = $messages->reverse();
+        return MessageResource::collection($messages);
     }
 
     public function searchChats(Request $request)

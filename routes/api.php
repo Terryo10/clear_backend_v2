@@ -108,6 +108,9 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('send-message-admin-manager', [ManagerChatMessageController::class, 'adminSendMessage']);
 });
 
+Route::get('messages/{chat}', [ChatController::class, 'getChatMessages'])->middleware('Auth:sanctum');
+Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMessages'])->middleware('Auth:sanctum');
+
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
     Route::get('services', [ServiceController::class, 'index']);

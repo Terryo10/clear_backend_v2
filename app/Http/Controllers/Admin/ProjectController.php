@@ -47,7 +47,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::paginate(10);
+        $projects = Project::latest()->paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
@@ -110,6 +110,11 @@ class ProjectController extends Controller
                 "user_id" => $request->input('user_id'),
             ]);
 
+            $chat = $this->chatRepoInterface->createChat([
+                'name' => $project->title,
+                'project_id' => $project->id,
+            ]);
+            $this->chatRepoInterface->addUsersToChat($chat, [$project->user]);
 
             return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
         } catch (\Exception $exception) {

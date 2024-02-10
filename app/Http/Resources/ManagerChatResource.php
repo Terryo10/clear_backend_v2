@@ -22,7 +22,6 @@ class ManagerChatResource extends JsonResource
             'accepted' => $this->accepted ? true : false,
             'isUserInChat' => $this->isUserInChat(),
             "lastMessage" => new ManagerChatMessageResource($this->getLastMessage()),
-            'messages' => ManagerChatMessageResource::collection($this->messages),
             'created_at' => $this->created_at->diffForHumans(),
             'updated_at' => $this->updated_at,
         ];

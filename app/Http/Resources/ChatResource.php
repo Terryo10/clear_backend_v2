@@ -14,14 +14,14 @@ class ChatResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'project' => $this->project->id,
             'users' => $this->users,
             "isGroup" => true,
-            //paginate the messages
-            'messages' => MessageResource::collection($this->messages()->paginate(10)),
 
             "lastMessage" => new MessageResource($this->getLastMessage()),
             'isUserInChat' => $this->isUserInChat(),
