@@ -93,12 +93,16 @@ class UserController extends Controller
         $request->validate([
             'password' => 'required|string|min:4',
         ]);
-
+        if ($request->input('status')) {
+            $user->update([
+                'status' => Hash::make($request->input('status')),
+            ]);
+        }
         $user->update([
             'password' => Hash::make($request->input('password')),
         ]);
 
-        return $this->jsonSuccess(200, 'User Password Changed Successful', $user, 'user');
+        return $this->jsonSuccess(200, 'User Updated Successful', $user, 'user');
     }
 
     /**
