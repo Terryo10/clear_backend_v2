@@ -137,4 +137,18 @@ class UserController extends Controller
         //write code to update profile
 
     }
+
+    public function search(Request $request)
+    {
+        $searchQuery = $request->input('search');
+
+        $users = User::where('first_name', 'LIKE', "%$searchQuery%")
+            ->orWhere('email', 'LIKE', "%$searchQuery%")
+            ->orWhere('role', 'LIKE', "%$searchQuery%")
+            ->orWhere('last_name', 'LIKE', "%$searchQuery%")
+            ->limit(15)
+            ->get();
+
+        return $this->jsonSuccess(200, 'Request Successful', $users, 'users');
+    }
 }
