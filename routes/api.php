@@ -61,6 +61,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::post('admin/key_factors', [KeyFactorsController::class, 'store']);
     Route::delete('admin/key_factors/{id}', [KeyFactorsController::class, 'destroy']);
     Route::resource('admin/users', UserController::class);
+    Route::post('admin/users/edit', [UserController::class, 'updateEdit']);
     Route::post('admin/users/password/{id}', [UserController::class, 'update']);
     Route::post('admin/remove-contractor-request-for-proposal', [ProjectController::class, 'removeContractorRequestForProposal']);
     Route::post('admin/send-proposal-to-contractor', [ProjectController::class, 'sendProjectToContractors']);

@@ -37,13 +37,14 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:4',
         ]);
 
         $user = User::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
+            'role' => $request->input('role'),
             'password' => Hash::make($request->input('password')),
         ]);
 
@@ -77,7 +78,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:4',
         ]);
 
         $user->update([
@@ -85,6 +86,23 @@ class UserController extends Controller
         ]);
 
         return $this->jsonSuccess(200, 'Request Successful', $user, 'user');
+    }
+    public function updateEdit(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $request->validate([
+            'password' => 'required|string|min:4',
+        ]);
+        if ($request->input('status')) {
+            $user->update([
+                'status' => Hash::make($request->input('status')),
+            ]);
+        }
+        $user->update([
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        return $this->jsonSuccess(200, 'User Updated Successful', $user, 'user');
     }
 
     /**
