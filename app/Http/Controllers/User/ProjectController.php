@@ -36,7 +36,8 @@ class ProjectController extends Controller
         $this->notificationRepoInterface = $notificationRepoInterface;
         $this->requestProposalRepoInterface = $requestProposalRepoInterface;
     }
-    public function createProject(Request $request){
+    public function createProject(Request $request)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -58,12 +59,11 @@ class ProjectController extends Controller
             ]
         );
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
-
-        }else{
-            try{
-                $project =  Project::create(array_merge($request->all(),[ 'user_id' => Auth::user()->id]));
+        } else {
+            try {
+                $project =  Project::create($request->merge(['user_id' => Auth::user()->id])->except(['is_update']));
                 $notification =
                     [
                         'title' => 'New Project by ' . Auth::user()->first_name . ' ' . Auth::user()->last_name,
@@ -78,7 +78,9 @@ class ProjectController extends Controller
                     ]
                 );
                 $this->broadcastNotification(
-                    [Auth::user()->id], $notification);
+                    [Auth::user()->id],
+                    $notification
+                );
                 $project->setProjectStatus('request_for_bids_received');
                 $this->projectRepoInterface->createProjectHistory($project, $project->status, 'Project Created');
                 $chat = $this->chatRepoInterface->createChat([
@@ -87,8 +89,8 @@ class ProjectController extends Controller
                 ]);
 
                 $this->chatRepoInterface->addUsersToChat($chat, [$project->user]);
-                return $this->jsonSuccess(200, 'Request Successful', $project , 'project');
-            }catch (Exception $exception) {
+                return $this->jsonSuccess(200, 'Request Successful', $project, 'project');
+            } catch (Exception $exception) {
                 return response()->json(['status' => 401, 'message' => "Error", "errors" => $exception->getMessage()]);
             }
         }
@@ -107,12 +109,10 @@ class ProjectController extends Controller
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
-    public function clientRequests(){
+    public function clientRequests()
+    {
         $projects = Project::where('user_id', auth()->user()->id)->orderBy('created_at', 'DESC')
             ->paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
-
-
-
 }
