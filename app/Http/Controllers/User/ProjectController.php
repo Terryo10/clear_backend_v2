@@ -63,7 +63,7 @@ class ProjectController extends Controller
             return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
         } else {
             try {
-                $project =  Project::create($request->merge(['user_id' => Auth::user()->id])->except(['is_update']));
+                $project =  Project::create($request->merge(['user_id' => Auth::user()->id])->except(['isUpdate', 'errors']));
                 $notification =
                     [
                         'title' => 'New Project by ' . Auth::user()->first_name . ' ' . Auth::user()->last_name,
