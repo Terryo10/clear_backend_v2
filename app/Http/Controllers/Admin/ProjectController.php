@@ -122,7 +122,8 @@ class ProjectController extends Controller
         }
     }
 
-    public function updateProject(Request $request){
+    public function updateProject(Request $request)
+    {
         //update project
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -178,8 +179,6 @@ class ProjectController extends Controller
         } catch (\Exception $exception) {
             return response()->json(['status' => 402, 'message' => 'Validation failed', 'error' => $exception->getMessage()]);
         }
-
-
     }
 
 
@@ -188,14 +187,14 @@ class ProjectController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-            'project_id' => 'required',
-            'contractors' => 'required',
-            'message' => 'required'
-        ]);
+                'project_id' => 'required',
+                'contractors' => 'required',
+                'message' => 'required'
+            ]
+        );
 
         if ($validator->fails()) {
-            return  $this->jsonError(401,'Request failed some fields are required',  $validator->getMessageBag(), 'errors');
-
+            return  $this->jsonError(401, 'Request failed some fields are required',  $validator->getMessageBag(), 'errors');
         }
 
         $data = $request->all();
@@ -237,7 +236,7 @@ class ProjectController extends Controller
 
     public function sendProposal(Request $request)
     {
-        $validation =Validator::make( $request->all(),[
+        $validation = Validator::make($request->all(), [
             'project_id' => 'required',
             'cost' => 'required | numeric',
             'description' => 'required',
@@ -250,8 +249,7 @@ class ProjectController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return  $this->jsonError(401,'Request failed some fields are required',  $validation->getMessageBag(), 'errors');
-
+            return  $this->jsonError(401, 'Request failed some fields are required',  $validation->getMessageBag(), 'errors');
         }
 
         $data = $request->all();
@@ -287,8 +285,7 @@ class ProjectController extends Controller
         $contractor = User::find(Auth::user()->id);
         $path = '';
         if ($request->file('attachment')) {
-             $path = $request->file('attachment')->store('projects/files');
-
+            $path = $request->file('attachment')->store('projects/files');
         }
         $project->proposals()->create([
             'cost' => $data['cost'],
@@ -296,7 +293,7 @@ class ProjectController extends Controller
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'contractor_id' => $contractor->id,
-            'attachment' =>$path,
+            'attachment' => $path,
             'contract_terms_conditions' => $data['contract_terms_conditions'],
             'execution_plan' => $data['execution_plan'],
             'site_info' => $data['site_info'],
@@ -324,7 +321,9 @@ class ProjectController extends Controller
         }
 
         if ($status) {
-            $query->where('status', 'like', '%' . $status . '%');
+            $query->where('status', 'like', '%' . $status . '%')->orWhereHas('service', function ($q) use ($service) {
+                $q->where('name', 'like', '%' . $service . '%');
+            });
         }
 
         if ($service) {
@@ -424,13 +423,15 @@ class ProjectController extends Controller
         $proposal = Proposal::where('contractor_id', $user->id)->where('project_id', $project->id)->first();
 
         $managerChats = ManagerChat::where('accepted', true)->where('user_id', $user->id)->get();
-        return $this->jsonSuccess(200, "Request found",
+        return $this->jsonSuccess(
+            200,
+            "Request found",
             [
                 'request' => $request,
                 'proposal' => $proposal,
                 'managerChats' => $managerChats
             ],
-            'request');
+            'request'
+        );
     }
-
 }
