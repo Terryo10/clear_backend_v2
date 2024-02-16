@@ -89,9 +89,9 @@ class MessageController extends Controller
             'message',
         ]);
         //store message file
-        if ($request->hasFile('attachement')) {
+        if ($request->hasFile('attachment')) {
             //check the file type if its audio and convert it to mp3
-            $file = $request->file('attachement');
+            $file = $request->file('attachment');
             $fileType = $file->getMimeType();
 
             // dd($fileType);

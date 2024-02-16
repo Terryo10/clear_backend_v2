@@ -18,7 +18,6 @@ class ChatController extends Controller
 {
     public function adminIndex(Request $request)
     {
-
         $chats = GroupChat::orderBy('updated_at', 'DESC')->get();
         $chatRequests = ManagerChat::where('accepted', false)->get();
         $managerChats = ManagerChat::where('accepted', true)->where('manager_id', auth()->user()->id)->get();
@@ -36,16 +35,16 @@ class ChatController extends Controller
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
 
-        $messages = $messages->reverse();
 
-        return MessageResource::collection($messages);
+
+        return MessageResource::collection($messages->reverse());
     }
 
     public function getManagerChatMessages($id)
     {
         $messages = ManagerChatMessage::where('manager_chat_id', $id)->orderBy('created_at', 'DESC')->paginate(10);
-        $messages = $messages->reverse();
-        return MessageResource::collection($messages);
+
+        return MessageResource::collection($messages->reverse());
     }
 
     public function searchChats(Request $request)
@@ -166,7 +165,7 @@ class ChatController extends Controller
 
         $managerChats = ManagerChat::where('user_id', auth()->user()->id)->get();
 
-        return $this->jsonSuccess(200, "User chats", ["group_chats" => ChatResource::collection($chats), "manager_chats" => ManagerChatResource::collection($managerChats)], "chats");
+        return $this->jsonSuccess(200, "User chats", ["group_chats" => ChatResource::collection($chats), "managerChats" => ManagerChatResource::collection($managerChats)], "chats");
     }
 
     // create function to get a single chat
