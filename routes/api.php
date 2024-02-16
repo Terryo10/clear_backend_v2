@@ -142,7 +142,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('request_service', [\App\Http\Controllers\User\ProjectController::class, 'createProject']);
     Route::get('user_projects', [\App\Http\Controllers\User\ProjectController::class, 'clientProjects']);
     Route::get('user_requests', [\App\Http\Controllers\User\ProjectController::class, 'clientRequests']);
-    Route::post('upload-images', [ProjectController::class, 'uploadImagesFromAdmin']);
+    Route::post('upload-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
     Route::post('/sign-offer/{id}', [ProjectOfferController::class, 'sign']);
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
     Route::post('project-rating', [ProjectController::class, 'rate']);

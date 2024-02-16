@@ -130,13 +130,13 @@ class ChatController extends Controller
         //check if user is in the chat
         $chatUser = ChatUser::where('user_id', $request->user_id)->where('group_chat_id', $chat->id)->first();
         if ($chatUser) {
-            return back()->with('message', 'User already in chat');
+            return $this->jsonSuccess(200, "User already in chat", null, "user");
         }
         //check if request has users
         $chat->users()->create([
             'user_id' => $request->user_id,
         ]);
-        return back()->with('message', 'User added to chat successfully');
+        return $this->jsonSuccess(200, "User added to chat successfully", null, "user");
     }
 
     // create function to remove users from a chat
@@ -144,7 +144,7 @@ class ChatController extends Controller
     {
         //check if request has users
         ChatUser::where('user_id', $request->user_id)->where('group_chat_id', $chat->id)->delete();
-        return back()->with('message', 'User removed from chat successfully');
+        return $this->jsonSuccess(200, "User removed from chat successfully", null, "user");
     }
 
     // create function to delete a chat
@@ -190,13 +190,11 @@ class ChatController extends Controller
         $chatUser = ChatUser::where('user_id', $user->id)->where('group_chat_id', $chat->id)->first();
         if ($chatUser) {
             return $this->jsonError(400, "You are already in this chat", null, "chat");
-
         }
         $chat->users()->create([
             'user_id' => $user->id,
         ]);
         return  $this->jsonSuccess(200, "Joined Chat", new ChatResource($chat), "chat");
-
     }
 
     public function deleteMessage(Request $request)
