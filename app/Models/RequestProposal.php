@@ -10,10 +10,10 @@ class RequestProposal extends Model
     protected $guarded;
 
     use HasFactory;
+    protected $with = ['contractor'];
 
     public function contractor()
     {
-        return $this->belongsTo(User::class, 'contractor_id');
+        return $this->hasOne(User::class, 'id', 'contractor_id');
     }
-
 }
