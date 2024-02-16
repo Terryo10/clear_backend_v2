@@ -21,6 +21,8 @@ use App\Http\Controllers\RequestProposalController;
 use App\Http\Controllers\User\KeyFactorController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ProjectOfferController;
+use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ContractorMiddleware;
 use Illuminate\Http\Request;
@@ -44,6 +46,22 @@ Route::post('/login', [loginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('/logout', [loginController::class, 'logout']);
+});
+
+Route::prefix('auth')->group(function () {
+    //auth routes
+    Route::post('change-password', [LoginController::class, 'changePassword'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('forgot-password', [LoginController::class, 'forgotPassword'])->name('passwords.sent');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/register', [RegisterController::class, 'register']);
+    Route::post('/refresh', [LoginController::class, 'refreshUser'])->middleware('auth:sanctum');
+    Route::get('/profile', [UserProfileController::class, 'index'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('/profile', [UserProfileController::class, 'update']);
+    Route::post('/profile/password', [UserProfileController::class, 'updatePasswordApi'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('/profile/username', [UserProfileController::class, 'updateEmailApi'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['auth:sanctum', 'verified']);
+    Route::get('/email/verify/{id}', [VerificationController::class, 'emailVerify'])->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 });
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
@@ -183,3 +201,4 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
         });
     });
 });
+

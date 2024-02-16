@@ -22,7 +22,6 @@ class ManagerChatMessageResource extends JsonResource
             'chat' => $this->chat,
             'fileType' => $this->getFileType(),
             'fileName' => $this->getFileName(),
-
             'isFromCurrentUser' => $this->isFromCurrentUser(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at,

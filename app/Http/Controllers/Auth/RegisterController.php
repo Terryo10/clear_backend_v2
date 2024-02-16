@@ -44,9 +44,13 @@ class RegisterController extends Controller
                     'role'=> $request->role
                 );
 
+
+
                 $user = User::create($input);
                 $credentials = $request->only('email', 'password');
                 $token = $user->createToken($user->email . '_Token')->plainTextToken;
+
+                $user->sendEmailVerificationNotification();
 
                 if (Auth::attempt($credentials)) {
                     return response()->json([

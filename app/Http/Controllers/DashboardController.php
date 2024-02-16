@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationResource;
 use App\Models\ManagerChat;
 use App\Models\Project;
 use App\Models\RequestProposal;
@@ -41,6 +42,8 @@ class DashboardController extends Controller
         $projectTotalCost = Project::where('status', 'project_in_progress')->orWhere('status', 'project_completed')->whereHas('transaction', function ($query) {
             $query->where('status', 'paid');
         })->sum('budget');
+
+
 
         return $this->jsonSuccess(200, "Dashboard Data Retrieved", [
             'clients' => $clients,

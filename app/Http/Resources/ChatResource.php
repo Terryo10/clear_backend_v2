@@ -22,7 +22,6 @@ class ChatResource extends JsonResource
             'project' => $this->project->id,
             'users' => $this->users,
             "isGroup" => true,
-
             "lastMessage" => new MessageResource($this->getLastMessage()),
             'isUserInChat' => $this->isUserInChat(),
             'accepted'  =>  true,
