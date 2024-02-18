@@ -21,6 +21,7 @@ use App\Http\Controllers\RequestProposalController;
 use App\Http\Controllers\User\KeyFactorController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ProjectOfferController;
+use App\Http\Controllers\ProjectRatingController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Middleware\AdminMiddleware;
@@ -62,6 +63,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['auth:sanctum', 'verified']);
     Route::get('/email/verify/{id}', [VerificationController::class, 'emailVerify'])->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+    Route::post('/project/feedback', [ProjectRatingController::class, 'store'])->middleware(['auth:sanctum', 'verified']);
 });
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
@@ -201,4 +203,3 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
         });
     });
 });
-
