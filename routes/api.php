@@ -63,7 +63,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['auth:sanctum', 'verified']);
     Route::get('/email/verify/{id}', [VerificationController::class, 'emailVerify'])->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-    Route::post('/project/feedback', [ProjectRatingController::class, 'store'])->middleware(['auth:sanctum', 'verified']);
 });
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
@@ -150,6 +149,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('project-rating', [ProjectController::class, 'rate']);
     Route::get('user-dashboard', [\App\Http\Controllers\DashboardController::class, 'user'])->name('user');
     Route::post('user-profile', [ProfileController::class, 'update']);
+    Route::post('project/feedback', [ProjectRatingController::class, 'store']);
 
     Route::group(['prefix' => 'chats',], function () {
         Route::post('/{project}', [ChatController::class, 'store']);
