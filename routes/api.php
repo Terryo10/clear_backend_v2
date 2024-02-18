@@ -21,6 +21,7 @@ use App\Http\Controllers\RequestProposalController;
 use App\Http\Controllers\User\KeyFactorController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ProjectOfferController;
+use App\Http\Controllers\ProjectRatingController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Middleware\AdminMiddleware;
@@ -150,6 +151,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('project-rating', [ProjectController::class, 'rate']);
     Route::get('user-dashboard', [\App\Http\Controllers\DashboardController::class, 'user'])->name('user');
     Route::post('user-profile', [ProfileController::class, 'update']);
+    Route::post('project/feedback', [ProjectRatingController::class, 'store']);
 
     Route::group(['prefix' => 'chats',], function () {
         Route::post('/{project}', [ChatController::class, 'store']);
@@ -203,4 +205,3 @@ Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function
         });
     });
 });
-

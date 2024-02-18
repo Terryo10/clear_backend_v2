@@ -9,13 +9,15 @@ class Project extends Model
 {
     use HasFactory;
     protected $guarded;
-    protected $with = ['images', 'scopeFiles','user', 'service', 'offer','proposals', 'requestProposals', 'history'];
+    protected $with = ['images', 'scopeFiles', 'user', 'service', 'offer', 'proposals', 'requestProposals', 'history', 'projectFeedBack'];
 
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(ProjectImages::class);
     }
 
-    public function scopeFiles(){
+    public function scopeFiles()
+    {
         return $this->hasMany(ProjectScopeFiles::class);
     }
 
