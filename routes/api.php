@@ -48,6 +48,8 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('/logout', [loginController::class, 'logout']);
 });
 
+
+
 Route::prefix('auth')->group(function () {
     //auth routes
     Route::post('change-password', [LoginController::class, 'changePassword'])->middleware(['auth:sanctum', 'verified']);

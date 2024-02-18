@@ -19,7 +19,7 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }
 
-        return redirect()->to('/email/success');
+        return view('email.verificationSuccess');
     }
 
     public function fullfillEmailVerification($user_id, Request $request)
@@ -41,7 +41,7 @@ class VerificationController extends Controller
     public function resendEmailVerification(Request $request)
     {
         $request->user()->sendEmailVerificationNotification();
-        return $this->jsonSuccess(200, "Email verification sent successfully", [], 'vefificationLink');
+        return $this->jsonSuccess(200, "Email verification sent successfully", [], 'verificationLink');
     }
 
     public function verificationEmailSuccess()
