@@ -90,12 +90,15 @@ class UserController extends Controller
     public function updateEdit(Request $request)
     {
         $user = User::findOrFail($request->id);
-        $request->validate([
-            'password' => 'required|string|min:4',
-        ]);
+        if ($request->input('password')) {
+            $request->validate([
+                'password' => 'required|string|min:4',
+            ]);
+        }
         if ($request->input('status')) {
             $user->update([
-                'status' => Hash::make($request->input('status')),
+                // 'status' => Hash::make($request->input('status')),
+                'status' => $request->input('status'),
             ]);
         }
         $user->update([
