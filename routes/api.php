@@ -15,6 +15,7 @@ use App\Http\Controllers\Contractor\ContractorProjectController;
 use App\Http\Controllers\ManagerChatController;
 use App\Http\Controllers\ManagerChatMessageController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PaymentInstructionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\RequestProposalController;
@@ -97,7 +98,10 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::get('admin/project-search', [ProjectController::class, 'search']);
     Route::resource('/sliders', SliderController::class);
     Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
+    Route::post('/admin/add-payment-link', [ProjectController::class, 'setPaymentLink']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
+
+
     //ADMIN CHAT ROUTES
     Route::post('admin/messages/{chat}', [MessageController::class, 'adminSendMessage']);
     Route::prefix('admin/chats')->group(function () {
@@ -136,6 +140,9 @@ Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMes
 
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
+    Route::get('paymentInstructions', [PaymentInstructionController::class, 'index']);
+    Route::post('paymentInstructions', [PaymentInstructionController::class, 'store']);
+    Route::delete('paymentInstructions/{paymentIntruction}', [PaymentInstructionController::class, 'delete']);
     Route::get('services', [ServiceController::class, 'index']);
     Route::post('userProfile', [UserController::class, 'getUser']);
     Route::get('key_factors', [KeyFactorController::class, 'getKeyFactors']);

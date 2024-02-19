@@ -382,6 +382,18 @@ class ProjectController extends Controller
 
         return $this->jsonSuccess(200, 'Payment Status Updated', $data, 'payment');
     }
+    public function setPaymentLink(Request $request)
+    {
+        $data = $request->validate([
+            'status_url' => 'required',
+            'url' => 'required',
+            'project_id' => 'required'
+        ]);
+
+        $this->projectRepoInterface->setPaymentLink($data);
+
+        return $this->jsonSuccess(200, 'Payment Status Updated', $data, 'payment');
+    }
 
     public function update(Request $request, Project $project)
     {

@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
     protected $guarded;
-    protected $with = ['images', 'scopeFiles', 'user', 'service', 'offer', 'proposals', 'requestProposals', 'history', 'projectFeedBack'];
+    protected $with = ['images', 'scopeFiles', 'user', 'service', 'offer', 'proposals', 'requestProposals', 'history', 'projectFeedBack', 'transaction'];
 
     public function images()
     {

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('amount')->nullable();
             $table->string('reference')->nullable();
             $table->string('payment_method')->nullable();
-            $table->foreignId('payment_option_id')->constrained('payment_options');
+            // $table->foreignId('payment_option_id')->constrained('payment_options');
             $table->foreignId('project_id')->constrained('projects');
             $table->timestamps();
         });
