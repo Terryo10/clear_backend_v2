@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -56,6 +60,32 @@ class loginController extends Controller
                 ]);
             }
         }
+    }
+
+    public function forgotPassword(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
+        $token = Str::random(64);
+
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+
+        // dd($token);
+
+        Mail::send('emails.forgotPassword', ['token' => $token, 'email' => $request->email], function ($message) use ($request) {
+            $message->to($request->email);
+            $message->subject('Reset Password');
+        });
+        $email = $request->input('email');
+
+        return response()->json(['status' => 200, 'success' => true, "message" => "Reset password link sent to $email . Follow the link to reset your password and login again"]);
     }
 
 
