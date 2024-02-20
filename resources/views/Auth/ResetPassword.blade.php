@@ -58,14 +58,25 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-1 col-sm-1 order-3 order-sm-2"></div>
-                <div class="col-lg-4 col-md-7 col-sm-6 col-6 order-2 order-sm-3">
-                    <div class="appie-btn-box text-right">
-                        <a class="main-btn ml-30" href="http://localhost:3000/dashboard">Go to account</a>
-                    </div>
-                </div>
+               
             </div>
         </div>
+
+        <form method="POST" action="{{ url('/reset-password')}}">
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}" />
+  <div class="form-group">
+    <label for="exampleInputEmail1">Password</label>
+    <input type="password" class="form-control" id="exampleInputEmail1" name="password" aria-describedby="emailHelp" placeholder="Enter password">
+    <small id="emailHelp" class="form-text text-muted">Change Password To The One You Will Remember.</small>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Confirm Password</label>
+    <input type="password" name="password_confirmation" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+ 
+  <button type="submit" class="btn btn-primary">Change Password</button>
+</form>
     </div>
 </header>
 
