@@ -70,6 +70,8 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     //admin-only routes here
+    Route::post('admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
+    Route::post('admin/add-payment-link', [ProjectController::class, 'setPaymentLink']);
     Route::resource('/admin/frequency', FrequencyController::class);
     Route::post('/update-service', [ServiceController::class, 'update']);
     Route::resource('/admin/service', ServiceController::class);
@@ -97,8 +99,6 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
     });
     Route::get('admin/project-search', [ProjectController::class, 'search']);
     Route::resource('/sliders', SliderController::class);
-    Route::post('/admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
-    Route::post('/admin/add-payment-link', [ProjectController::class, 'setPaymentLink']);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
 
 
