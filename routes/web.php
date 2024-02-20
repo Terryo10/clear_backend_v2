@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/email/success',function (){
+Route::get('/email/success', function () {
     return view('email.verificationSuccess');
 })->name('email.success');
+
+Route::get('reset-password/{token}', [LoginController::class, 'showResetPasswordForm'])->name('reset.password.get');
+Route::post('/reset-password', [LoginController::class, 'submitResetPasswordForm'])->name('update.password');

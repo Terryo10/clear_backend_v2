@@ -87,8 +87,34 @@ class loginController extends Controller
 
         return response()->json(['status' => 200, 'success' => true, "message" => "Reset password link sent to $email . Follow the link to reset your password and login again"]);
     }
+    public function showResetPasswordForm($token)
+    {
+        return view('Auth/ResetPassword', ['token' => $token]);
+    }
+    public function submitResetPasswordForm(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+            'password_confirmation' => 'required'
+        ]);
 
+        $updatePassword = DB::table('password_resets')
+            ->where([
+                'token' => $request->token
+            ])
+            ->first();
 
+        if (!$updatePassword) {
+            return back()->withInput()->with('error', 'Invalid token!');
+        }
+
+        $user = User::where('email', $updatePassword->email)
+            ->update(['password' => Hash::make($request->password)]);
+
+        DB::table('password_resets')->where(['token' => $request->token])->delete();
+
+        return redirect('/email/success')->with('message', 'Your password has been changed!');
+    }
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
