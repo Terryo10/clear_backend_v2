@@ -58,25 +58,24 @@
                         </a>
                     </div>
                 </div>
-               
+
             </div>
         </div>
 
         <form method="POST" action="{{ url('/reset-password')}}">
         @csrf
-        <input type="hidden" name="token" value="{{ $token }}" />
-  <div class="form-group">
-    <label for="exampleInputEmail1">Password</label>
-    <input type="password" class="form-control" id="exampleInputEmail1" name="password" aria-describedby="emailHelp" placeholder="Enter password">
-    <small id="emailHelp" class="form-text text-muted">Change Password To The One You Will Remember.</small>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Confirm Password</label>
-    <input type="password" name="password_confirmation" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
- 
-  <button type="submit" class="btn btn-primary">Change Password</button>
-</form>
+        <input type="hidden" name="email_token" value="{{ $token }}" />
+            <div class="form-group">
+                <label for="exampleInputEmail1">Password</label>
+                <input type="password" class="form-control" id="exampleInputEmail1" required name="password" aria-describedby="emailHelp" placeholder="Enter password">
+                <small id="emailHelp" class="form-text text-muted">Change Password To The One You Will Remember.</small>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Confirm Password</label>
+                <input type="password" name="password_confirmation" required class="form-control" id="exampleInputPassword1" placeholder="Password">
+              </div>
+            <button type="submit" class="btn btn-primary">Change Password</button>
+        </form>
     </div>
 </header>
 

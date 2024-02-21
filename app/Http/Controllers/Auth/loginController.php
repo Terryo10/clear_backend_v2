@@ -100,7 +100,7 @@ class loginController extends Controller
 
         $updatePassword = DB::table('password_resets')
             ->where([
-                'token' => $request->token
+                'token' => $request->email_token
             ])
             ->first();
 
@@ -115,6 +115,7 @@ class loginController extends Controller
 
         return redirect('/email/success')->with('message', 'Your password has been changed!');
     }
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

@@ -140,7 +140,7 @@ Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMes
 
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
-    Route::get('paymentInstructions', [PaymentInstructionController::class, 'index']);
+    Route::get('/paymentInstructions', [PaymentInstructionController::class, 'index']);
     Route::post('paymentInstructions', [PaymentInstructionController::class, 'store']);
     Route::delete('paymentInstructions/{paymentInstruction}', [PaymentInstructionController::class, 'destroy']);
     Route::get('services', [ServiceController::class, 'index']);
