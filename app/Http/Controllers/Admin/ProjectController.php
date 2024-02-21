@@ -47,7 +47,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::latest()->paginate(20);
+        $projects = Project::where(function ($query) {
+            $query->where('status', "project_in_progress")
+                ->orWhere('status', "project_completed");
+        })->latest()->paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
     }
 
