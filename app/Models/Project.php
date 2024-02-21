@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
     protected $guarded;
-    protected $with = ['images', 'scopeFiles', 'user', 'service', 'offer', 'proposals', 'requestProposals', 'history', 'projectFeedBack', 'transaction'];
+    protected $with = ['images', 'scopeFiles', 'user', 'service', 'offer', 'proposals', 'requestProposals', 'history', 'projectFeedBack', 'transaction', 'frequency'];
 
     public function images()
     {
@@ -40,6 +40,10 @@ class Project extends Model
     public function offer()
     {
         return $this->hasOne(ProjectOffers::class, 'project_id', 'id');
+    }
+    public function frequency()
+    {
+        return $this->hasOne(Frequency::class, 'id', 'frequency');
     }
 
     public function proposals()
