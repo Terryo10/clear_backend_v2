@@ -99,10 +99,9 @@ class ProjectController extends Controller
 
     public function clientProjects()
     {
-
         $projects = Project::where('user_id', auth()->user()->id)->where(function ($query) {
-            $query->where('status', "Project In Progress")
-                ->orWhere('status', "Completed");
+            $query->where('status', "project_in_progress")
+                ->orWhere('status', "project_completed");
         })->orderBy('created_at', 'DESC')
             ->paginate(20);
 
@@ -113,6 +112,6 @@ class ProjectController extends Controller
     {
         $projects = Project::where('user_id', auth()->user()->id)->orderBy('created_at', 'DESC')
             ->paginate(20);
-        return $this->jsonSuccess(200, 'Request Successful', $projects, 'projects');
+        return $this->jsonSuccess(200, 'Request Successful', $projects, 'requests');
     }
 }
