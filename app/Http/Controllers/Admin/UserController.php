@@ -94,6 +94,10 @@ class UserController extends Controller
             $request->validate([
                 'password' => 'required|string|min:4',
             ]);
+
+            $user->update([
+                'password' => Hash::make($request->input('password')),
+            ]);
         }
         if ($request->input('status')) {
             $user->update([
@@ -101,9 +105,13 @@ class UserController extends Controller
                 'status' => $request->input('status'),
             ]);
         }
-        $user->update([
-            'password' => Hash::make($request->input('password')),
-        ]);
+        if ($request->input('role')) {
+            $user->update([
+                // 'status' => Hash::make($request->input('status')),
+                'role' => $request->input('role'),
+            ]);
+        }
+
 
         return $this->jsonSuccess(200, 'User Updated Successful', $user, 'user');
     }
