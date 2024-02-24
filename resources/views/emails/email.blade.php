@@ -1,4 +1,4 @@
-<h1>Your Project Status Updated</h1>
+<h1>{{ $subject }}</h1>
 <p>{{ $message }}</p>
 
 You can go and view your project:
