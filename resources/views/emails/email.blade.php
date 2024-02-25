@@ -2,4 +2,4 @@
 <p>{{ $message }}</p>
 
 You can go and view your project:
-<a href="{{ url('http://clearbuildingsolutions.com/dashboard/project/') }}">View Project</a>
+<a href="{{ url('http://clearbuildingsolutions.com/dashboard') }}">View Project</a>
