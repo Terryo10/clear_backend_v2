@@ -200,11 +200,10 @@ class ChatController extends Controller
     public function deleteMessage(Request $request)
     {
         $data = $request->validate([
-            'id' => 'required',
-            'isGroup' => 'required|boolean'
+            'id' => 'required'
         ]);
 
-        if ($data['isGroup']) {
+        if ($request->isGroup) {
             $message = Message::find($data['id']);
             $message->delete();
         } else {

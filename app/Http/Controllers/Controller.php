@@ -15,7 +15,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function jsonError($statusCode = 500, $message = "Unexpected Error",$data = [], $key): \Illuminate\Http\JsonResponse
+    public function jsonError($statusCode = 500, $message = "Unexpected Error", $data = [], $key): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             "success" => false,
@@ -38,8 +38,9 @@ class Controller extends BaseController
     public function sendEmail($subject, $email_message, $email)
     {
         try {
-            Mail::send('emails.email', ['message' => $email_message], function ($message) use ($email, $subject) {
-                $message->to($email)->subject($subject);
+            Mail::send('emails.email', ['message' => $email_message, 'subject' => $subject], function ($message) use ($email, $subject) {
+                $message->to($email);
+                $message->subject($subject);
             });
         } catch (\Exception $e) {
             return $e->getMessage();

@@ -115,7 +115,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
 
     Route::prefix('admin/messages')->group(function () {
         Route::post('/join/{chat}', [ChatController::class, 'joinChat']);
-        Route::delete('delete', [ChatController::class, 'deleteMessage']);
+        Route::post('/delete/message', [ChatController::class, 'deleteMessage']);
     });
 
     Route::prefix('admin/notifications')->group(function () {
