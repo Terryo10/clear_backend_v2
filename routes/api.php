@@ -140,6 +140,7 @@ Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMes
 
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
+    Route::get('refresh-user',[LoginController::class, 'refreshUser']);
     Route::post('delete-project-file/{id}', [ProjectImagesController::class, 'deleteProjectFile']);
     Route::get('paymentInstructions', [PaymentInstructionController::class, 'index']);
     Route::get('view_project/{id}', [ProjectController::class, 'show']);

@@ -124,4 +124,15 @@ class loginController extends Controller
             'message' => 'Successfully logged out',
         ]);
     }
+
+    public function refreshUser(){
+        $user =Auth::user();
+        $token = $user->createToken('apiToken')->plainTextToken;
+        return response()->json([
+            'status' => 200,
+            'user' => $user,
+            'token' => $token,
+            'message' => 'Logged in Successfully ',
+        ]);
+    }
 }
