@@ -46,17 +46,23 @@ class ServiceController extends Controller
             return response()->json(['status' => 401, 'message' => "validation failed", "errors" => $validator->errors()]);
         } else {
             $images_new = "";
-            if ($file = $request->file('image')) {
-                $var = date_create();
-                $date = date_format($var, 'Ymd');
-                $imageName = $date . '_' . $file->getClientOriginalName();
-                $file->move(public_path() . '/uploads/', $imageName);
-                $url = '/uploads/' . $imageName;
-                $images_new = $url;
+            $path = "";
+            // if ($file = $request->file('image')) {
+            //     $var = date_create();
+            //     $date = date_format($var, 'Ymd');
+            //     $imageName = $date . '_' . $file->getClientOriginalName();
+            //     $file->move(public_path() . '/uploads/', $imageName);
+            //     $url = '/uploads/' . $imageName;
+            //     $images_new = $url;
+            // }
+
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $path = $image->store('images'); // Store the image in the storage/app/images directory
             }
             $input = array(
                 "name" => $request->name,
-                "image" => $images_new,
+                "image" => $path,
                 "status" => $request->status,
             );
 
@@ -90,7 +96,7 @@ class ServiceController extends Controller
         $request->validate([
             'name' => 'string|max:255',
         ]);
-        $service= Service::findOrfail( $request->input('id'));
+        $service = Service::findOrfail($request->input('id'));
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -112,9 +118,6 @@ class ServiceController extends Controller
 
         $service->update($inputs);
         return $this->jsonSuccess(200, 'Request Successful', $service, 'service');
-
-
-
     }
 
     /**
