@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -40,7 +41,9 @@ class VerificationController extends Controller
     //create function to resend email verification
     public function resendEmailVerification(Request $request)
     {
-        $request->user()->sendEmailVerificationNotification();
+        $user = User::where('email', Auth::user()->email)->first();
+
+        $user->sendEmailVerificationNotification();
         return $this->jsonSuccess(200, "Email verification sent successfully", [], 'verificationLink');
     }
 
