@@ -132,7 +132,7 @@ class loginController extends Controller
             'status' => 200,
             'user' => $user,
             'token' => $token,
-            'message' => 'Logged in Successfully ',
+            'message' => 'Refreshed Successfully ',
         ]);
     }
 }
