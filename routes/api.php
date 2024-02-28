@@ -54,18 +54,18 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 
 Route::prefix('auth')->group(function () {
     //auth routes
-    Route::post('change-password', [LoginController::class, 'changePassword'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('change-password', [LoginController::class, 'changePassword'])->middleware(['Auth:sanctum', 'verified']);
     Route::post('forgot-password', [LoginController::class, 'forgotPassword'])->name('passwords.sent');
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/register', [RegisterController::class, 'register']);
-    Route::post('/refresh', [LoginController::class, 'refreshUser'])->middleware('auth:sanctum');
-    Route::get('/profile', [UserProfileController::class, 'index'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('/refresh', [LoginController::class, 'refreshUser'])->middleware('Auth:sanctum');
+    Route::get('/profile', [UserProfileController::class, 'index'])->middleware(['Auth:sanctum', 'verified']);
     Route::post('/profile', [UserProfileController::class, 'update']);
-    Route::post('/profile/password', [UserProfileController::class, 'updatePasswordApi'])->middleware(['auth:sanctum', 'verified']);
-    Route::post('/profile/username', [UserProfileController::class, 'updateEmailApi'])->middleware(['auth:sanctum', 'verified']);
-    Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['auth:sanctum', 'verified']);
+    Route::post('/profile/password', [UserProfileController::class, 'updatePasswordApi'])->middleware(['Auth:sanctum', 'verified']);
+    Route::post('/profile/username', [UserProfileController::class, 'updateEmailApi'])->middleware(['Auth:sanctum', 'verified']);
+    Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['Auth:sanctum', 'verified']);
     Route::get('/email/verify/{id}', [VerificationController::class, 'emailVerify'])->middleware(['signed'])->name('verification.verify');
-    Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+    Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['Auth:sanctum', 'throttle:6,1'])->name('verification.send');
 });
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
@@ -140,7 +140,7 @@ Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMes
 
 //USER
 Route::middleware(['Auth:sanctum'])->group(function () {
-    Route::get('refresh-user',[LoginController::class, 'refreshUser']);
+    Route::get('refresh-user', [LoginController::class, 'refreshUser']);
     Route::post('delete-project-file/{id}', [ProjectImagesController::class, 'deleteProjectFile']);
     Route::get('paymentInstructions', [PaymentInstructionController::class, 'index']);
     Route::get('view_project/{id}', [ProjectController::class, 'show']);
