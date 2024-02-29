@@ -21,10 +21,10 @@ class     ManagerChatController extends Controller
     {
         $user = Auth::user();
         $managerChatFound = ManagerChat::where('user_id', $user->id)->first(); {
-        if ($managerChatFound) {
-            return $this->jsonError(400, 'You Already Have Chat Request', null, 'chat_request');
+            if ($managerChatFound) {
+                return $this->jsonError(400, 'You Already Have Chat Request', null, 'chat_request');
+            }
         }
-    }
 
         $managerChat = ManagerChat::create([
             'user_id' => $user->id,
@@ -41,10 +41,10 @@ class     ManagerChatController extends Controller
 
         //check if user has chat request
         $managerChatFound = ManagerChat::where('user_id', $user->id)->first(); {
-        if ($managerChatFound) {
-            return $this->jsonError(400, 'You Already Have Chat Request', null, 'chat_request');
+            if ($managerChatFound) {
+                return $this->jsonError(400, 'You Already Have Chat Request', null, 'chat_request');
+            }
         }
-    }
         $managerChat = ManagerChat::create([
             'user_id' => $user->id,
             'accepted' => false,
@@ -77,6 +77,8 @@ class     ManagerChatController extends Controller
     public function acceptChatRequest(ManagerChat $managerChat)
     {
         if ($managerChat->manager_id == Auth::user()->id) {
+            return $this->jsonSuccess(404, 'You have aready accepted request', [], 'manager_chat');
+
             return back()->with('message', 'You have aready accepted request');
         }
         $managerChat->update(['accepted' => true, 'manager_id' => Auth::user()->id]);
