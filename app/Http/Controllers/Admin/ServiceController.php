@@ -99,13 +99,8 @@ class ServiceController extends Controller
         $service = Service::findOrfail($request->input('id'));
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $var = date_create();
-            $date = date_format($var, 'Ymd');
-            $imageName = $date . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads'), $imageName);
-            $url = '/uploads/' . $imageName;
-            $images_new = $url;
+            $image = $request->file('image');
+            $images_new = $image->store('images'); // Store the image in the storage/app/images directory
         } else {
             $images_new = $service->image; // Preserve existing image if no new image is uploaded
         }
