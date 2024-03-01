@@ -47,9 +47,9 @@ class ManagerChatMessageController extends Controller
         $chat = ManagerChat::find($data['id']);
 
         //store message file
-        if ($request->hasFile('attachement')) {
-            $path = $request->file('attachement')->store('chat/messages', ['disk' => 'public']);
-            $data['attachement'] = $path;
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('chat/messages', ['disk' => 'public']);
+            $data['attachment'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
         $data['manager_chat_id'] = $chat->id;
@@ -58,7 +58,7 @@ class ManagerChatMessageController extends Controller
             'message' => $data['message'],
             'user_id' => $data['user_id'],
             'manager_chat_id' => $data['manager_chat_id'],
-            'attachment' => $request->hasFile('attachement') ? $data['attachement'] : null,
+            'attachment' => $request->hasFile('attachment') ? $data['attachment'] : null,
         ]);
         $messageToEvent =
             [
@@ -83,9 +83,9 @@ class ManagerChatMessageController extends Controller
         $chat = ManagerChat::findOrfail($data['id']);
 
         //store message file
-        if ($request->hasFile('attachement')) {
-            $path = $request->file('attachement')->store('chat/messages', ['disk' => 'public']);
-            $data['attachement'] = $path;
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('chat/messages', ['disk' => 'public']);
+            $data['attachment'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
         $data['manager_chat_id'] = $chat->id;
@@ -94,7 +94,7 @@ class ManagerChatMessageController extends Controller
             'message' => $data['message'],
             'user_id' => $data['user_id'],
             'manager_chat_id' => $data['manager_chat_id'],
-            'attachment' => $request->hasFile('attachement') ? $data['attachement'] : null,
+            'attachment' => $request->hasFile('attachment') ? $data['attachment'] : null,
         ]);
 
         $messageToEvent =
@@ -119,9 +119,9 @@ class ManagerChatMessageController extends Controller
         $chat = ManagerChat::find($data['id']);
 
         //store message file
-        if ($request->hasFile('attachement')) {
-            $path = $request->file('attachement')->store('chat/messages', ['disk' => 'public']);
-            $data['attachement'] = $path;
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('chat/messages', ['disk' => 'public']);
+            $data['attachment'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
         $data['manager_chat_id'] = $chat->id;
@@ -130,7 +130,7 @@ class ManagerChatMessageController extends Controller
             'message' => $data['message'],
             'user_id' => $data['user_id'],
             'manager_chat_id' => $data['manager_chat_id'],
-            'attachement' => $data['attachement'] ? $data['attachement'] : null,
+            'attachment' => $data['attachment'] ? $data['attachment'] : null,
 
         ]);
 

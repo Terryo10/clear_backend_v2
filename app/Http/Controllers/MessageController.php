@@ -128,16 +128,16 @@ class MessageController extends Controller
         ]);
 
         //store message file
-        if ($request->hasFile('attachement')) {
+        if ($request->hasFile('attachment')) {
             //check the file type if its audio and convert it to mp3
-            $file = $request->file('attachement');
+            $file = $request->file('attachment');
             $fileType = $file->getMimeType();
             $randomString = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
             $file->move(public_path('/storage/chat/messages'), $randomString . $file->getClientOriginalName());
             $path = 'chat/messages/' . $randomString . $file->getClientOriginalName();
 
             // $path = $request->file('attachement')->store('chat/messages', ['disk' =>   'public']);
-            $data['attachement'] = $path;
+            $data['attachment'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
         $message = $chat->messages()->create($data);

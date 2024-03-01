@@ -17,7 +17,7 @@ class MessageResource extends JsonResource
         return [
             'id' => $this->id,
             'message' => $this->message,
-            'attachment' => $this->attachement,
+            'attachment' => $this->attachment,
             'user' => $this->user,
             'chat' => $this->group_chat_id,
             'fileType' => $this->getFileType(),

@@ -17,7 +17,7 @@ class ManagerChatMessageResource extends JsonResource
         return [
             'id' => $this->id,
             'message' => $this->message,
-            'attachement' => $this->attachment,
+            'attachment' => $this->attachment,
             'user' => $this->user,
             'chat' => $this->chat,
             'fileType' => $this->getFileType(),

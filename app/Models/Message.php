@@ -35,16 +35,16 @@ class Message extends Model
 
     function getFileType()
     {
-        if (!$this->attachement) {
+        if (!$this->attachment) {
             return null;
         }
-        $path_info = pathinfo($this->attachement);
+        $path_info = pathinfo($this->attachment);
 
         return $path_info['extension'];
     }
     function getFileName()
     {
-        if (!$this->attachement) {
+        if (!$this->attachment) {
             return null;
         }
         if ($this->isImage()) {
