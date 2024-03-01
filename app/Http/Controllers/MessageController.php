@@ -43,14 +43,14 @@ class MessageController extends Controller
             'message' => 'nullable',
         ]);
         //store message file
-        if ($request->hasFile('attachement')) {
-            $path = $request->file('attachement')->store('chat/messages', ['disk' =>   'public']);
-            $data['attachement'] = $path;
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('chat/messages', ['disk' =>   'public']);
+            $data['attachment'] = $path;
         }
 
-        if ($request->hasFile('attachement')) {
+        if ($request->hasFile('attachment')) {
             //check the file type if its audio and convert it to mp3
-            $file = $request->file('attachement');
+            $file = $request->file('attachment');
             $fileType = $file->getMimeType();
 
             //change file extension to mp3 before storing
@@ -103,24 +103,9 @@ class MessageController extends Controller
             $path = 'chat/messages/' . $randomString . $file->getClientOriginalName();
 
             // $path = $request->file('attachement')->store('chat/messages', ['disk' =>   'public']);
-            $data['attachement'] = $path;
+            $data['attachment'] = $path;
         }
-        if ($request->hasFile('attachement')) {
-            //check the file type if its audio and convert it to mp3
-            $file = $request->file('attachement');
-            $fileType = $file->getMimeType();
 
-            // dd($fileType);
-
-            //change file extension to mp3 before storing
-            //generate random string to append to file name
-            $randomString = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
-            $file->move(public_path('/storage/chat/messages'), $randomString . $file->getClientOriginalName());
-            $path = 'chat/messages/' . $randomString . $file->getClientOriginalName();
-
-            // $path = $request->file('attachement')->store('chat/messages', ['disk' =>   'public']);
-            $data['attachement'] = $path;
-        }
         $data['user_id'] = auth()->user()->id;
         $message = $chat->messages()->create($data);
 
