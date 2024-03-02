@@ -150,6 +150,9 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('userProfile', [UserController::class, 'getUser']);
     Route::get('key_factors', [KeyFactorController::class, 'getKeyFactors']);
     Route::get('frequencies', [KeyFactorController::class, 'getFrequencies']);
+    Route::prefix('properties')->group(function () {
+        Route::get('/',  [KeyFactorController::class, 'all'])->name('properties');
+    });
     Route::post('updateProfilePicture', [ProfileController::class, 'updateProfilePicture']);
     Route::post('updatePassword', [ProfileController::class, 'updateUserPassword']);
     Route::post('request_service', [\App\Http\Controllers\User\ProjectController::class, 'createProject']);
