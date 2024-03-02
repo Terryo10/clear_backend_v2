@@ -9,12 +9,18 @@ use Illuminate\Http\Request;
 
 class KeyFactorController extends Controller
 {
-    public function getKeyFactors(){
+    public function getKeyFactors()
+    {
         return $this->jsonSuccess(200, 'Request Successful', KeyFactors::all(), 'key_factor');
-
     }
 
-    public function getFrequencies(){
+    public function getFrequencies()
+    {
         return $this->jsonSuccess(200, 'Request Successful', Frequency::all(), 'frequency');
+    }
+
+    public function all()
+    {
+        return $this->jsonSuccess(200, "All Props", ["keyFactors" => KeyFactors::all(), "frequencies" => Frequency::all()], "props");
     }
 }
