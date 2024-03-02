@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -68,6 +69,6 @@ class RegisterController extends Controller
     public function testEmail(Request $request)
     {
         $this->sendEmail("Email Test", "Email Test By Developer Gene Piki!!!", $request->email);
-        return $this->jsonSuccess(200, "", null, "data");
+        return $this->jsonSuccess(200, "Email Send Successfully!!!", null, "data");
     }
 }

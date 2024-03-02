@@ -38,7 +38,7 @@ class Controller extends BaseController
     public function sendEmail($subject, $email_message, $email)
     {
         try {
-            Mail::send('emails.email', ['message' => $email_message, 'subject' => $subject], function ($message) use ($email, $subject) {
+            Mail::send('emails.email', ['email_message' => $email_message, 'subject' => $subject], function ($message) use ($email, $subject) {
                 $message->to($email);
                 $message->subject($subject);
             });
