@@ -24,7 +24,7 @@ class RegisterController extends Controller
                 'email' => 'required|min:6',
                 'password' => 'required|min:3',
                 'confirm_password' => 'required|same:password',
-                'role'=>'required',
+                'role' => 'required',
             ]
         );
 
@@ -41,7 +41,7 @@ class RegisterController extends Controller
                     'last_name' => $request->last_name,
                     'email' => $request->email,
                     'password' => bcrypt($request->password),
-                    'role'=> $request->role
+                    'role' => $request->role
                 );
 
 
@@ -59,9 +59,15 @@ class RegisterController extends Controller
                         'token' => $token,
                         'role' => $user->role,
                         'user' => $user,
-                        ]);
+                    ]);
                 }
             }
         }
+    }
+
+    public function testEmail(Request $request)
+    {
+        $this->sendEmail("Email Test", "Email Test By Developer Gene Piki!!!", $request->email);
+        return $this->jsonSuccess(200, "", null, "data");
     }
 }
