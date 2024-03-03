@@ -355,7 +355,7 @@ class ProjectController extends Controller
 
     public function getRequests()
     {
-        $requests = Project::where('status', 'request_for_bids_received')->paginate(20);
+        $requests = Project::paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $requests, 'requests');
         return ProjectResource::collection($requests);
     }
