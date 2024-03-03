@@ -84,7 +84,7 @@ class NotificationRepo implements NotificationRepoInterface
         $subject = $data['subject'];
         $email_message = $data['email_message'];
         try {
-            Mail::send('emails.email', ['message' => $email_message], function ($message) use ($email, $subject) {
+            Mail::send('emails.email', ['message' => $email_message, 'email_message' => $email_message], function ($message) use ($email, $subject) {
                 $message->to($email)->subject($subject);
             });
         } catch (\Throwable $th) {
