@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\NotifyUser;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
 use App\Interfaces\Chat\ChatRepoInterface;
@@ -18,6 +19,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Notification as ModelsNotification;
 
 class ProjectController extends Controller
 {
@@ -302,6 +304,16 @@ class ProjectController extends Controller
             'site_info' => $data['site_info'],
             'scope_of_work' => $data['scope_of_work'],
         ]);
+        $notification = ModelsNotification::create([
+            'title' => 'Contractor Added Proposal To:',
+            'body' => 'Project  ' . $project->title . ' ',
+            'type' => 'Global'
+        ]);
+        $this->broadcastNotification(
+            [Auth::user()->id],
+            $notification
+        );
+        broadcast(new NotifyUser($project->user_id, $notification))->toOthers();
         //get contractor
         return $this->jsonSuccess(200, 'Proposal Created', 'proposal', 'proposal');
     }

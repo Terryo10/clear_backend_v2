@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\Offers;
 
+use App\Events\NotifyUser;
 use App\Interfaces\Chat\ChatRepoInterface;
 use App\Interfaces\Images\ImageRepoInterface;
 use App\Interfaces\Notifications\NotificationRepoInterface;
@@ -12,6 +13,7 @@ use App\Models\OfferOptions;
 use App\Models\Project;
 use App\Models\ProjectOffer;
 use App\Models\ProjectOffers;
+use App\Models\Notification as ModelsNotification;
 
 class OfferRepo implements OfferRepoInterface
 {
@@ -67,7 +69,7 @@ class OfferRepo implements OfferRepoInterface
         $image = str_replace(' ', '+', $image);
         $imageName = time() . '.png';
 
-        $data['manager_signature'] = $this->imageRepo->uploadImage( $data['manager_signature'], 'projects/offers/manager_signatures');
+        $data['manager_signature'] = $this->imageRepo->uploadImage($data['manager_signature'], 'projects/offers/manager_signatures');
 
         $offer->manager_signature =  $data['manager_signature'];
         $offer->status = "manager_signed";
@@ -87,6 +89,12 @@ class OfferRepo implements OfferRepoInterface
             'email_message' => 'Offer for project ' . $offer->project->title . ' has been accepted',
             'email' => $offer->project->user->email,
         ]);
+        $notification = ModelsNotification::create([
+            'title' => 'Offer Accepted',
+            'body' => 'Offer for project ' . $offer->project->title . ' has been accepted',
+            'type' => 'Request'
+        ]);
+        broadcast(new NotifyUser($offer->project->user, $notification))->toOthers();
         $this->notificationRepo->broadCastNotification([$offer->project->user], [
             'title' => 'Offer Accepted',
             'body' => 'Offer for project ' . $offer->project->title . ' has been accepted',
@@ -103,7 +111,7 @@ class OfferRepo implements OfferRepoInterface
         $data['signature'] = $this->imageRepo->uploadImage($data['signature'], 'projects/offers/signatures');
         $offer->selected_option = $data['selected_option'];
 
-        //uppload signed document
+        //upload signed document
         $offer->signature =   $data['signature'];
         $offer->status = "client_signed";
         $offer->contract_terms_conditions = $option->contract_terms_conditions;
@@ -126,6 +134,12 @@ class OfferRepo implements OfferRepoInterface
             'body' => 'Offer for project ' . $offer->project->title . ' has been signed',
             'type' => 'Request'
         ]);
+        $notification = ModelsNotification::create([
+            'title' => 'Offer Signed',
+            'body' => 'Option ' . $option->option_name . "with Budget " . $option->cost . ' has been signed by Client',
+            'type' => 'Option Signed'
+        ]);
+        broadcast(new NotifyUser($option->contractor_id, $notification))->toOthers();
         return true;
     }
 

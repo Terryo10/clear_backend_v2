@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotifyUser;
 use App\Http\Resources\ChatResource;
 use App\Http\Resources\ManagerChatResource;
 use App\Http\Resources\MessageResource;
@@ -13,6 +14,8 @@ use App\Models\Message;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification as ModelsNotification;
+
 
 class ChatController extends Controller
 {
@@ -136,6 +139,13 @@ class ChatController extends Controller
         $chat->users()->create([
             'user_id' => $request->user_id,
         ]);
+        $notification = ModelsNotification::create([
+            'user_id' => $request->user_id,
+            'title' => "You Have Been Added To Chat..",
+            'body' => "",
+            'type' => "Chat",
+        ]);
+        broadcast(new NotifyUser($request->user_id, $notification))->toOthers();
         return $this->jsonSuccess(200, "User added to chat successfully", null, "user");
     }
 
