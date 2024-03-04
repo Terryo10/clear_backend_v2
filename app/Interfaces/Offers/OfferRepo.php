@@ -96,7 +96,7 @@ class OfferRepo implements OfferRepoInterface
             'type' => 'Request',
             'user_id' => Auth::user()->id
         ]);
-        broadcast(new NotifyUser($offer->project->user, $notification))->toOthers();
+        broadcast(new NotifyUser($offer->project->user->id, $notification))->toOthers();
         $this->notificationRepo->broadCastNotification([$offer->project->user], [
             'title' => 'Offer Accepted',
             'body' => 'Offer for project ' . $offer->project->title . ' has been accepted',
