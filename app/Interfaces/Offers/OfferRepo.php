@@ -136,6 +136,11 @@ class OfferRepo implements OfferRepoInterface
             'body' => 'Offer for project ' . $offer->project->title . ' has been signed',
             'type' => 'Request'
         ]);
+        $this->notificationRepo->broadCastNotification([$offer->project->user], [
+            'title' => 'Offer Signed',
+            'body' => 'Offer for project ' . $offer->project->title . ' has been signed',
+            'type' => 'Global'
+        ]);
         $notification = ModelsNotification::create([
             'title' => 'Offer Signed',
             'body' => 'Option ' . $option->option_name . "with Budget " . $option->cost . ' has been signed by Client',
