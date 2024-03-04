@@ -307,7 +307,8 @@ class ProjectController extends Controller
         $notification = ModelsNotification::create([
             'title' => 'Contractor Added Proposal To:',
             'body' => 'Project  ' . $project->title . ' ',
-            'type' => 'Global'
+            'type' => 'Global',
+            'user_id' => $project->user_id
         ]);
         $this->broadcastNotification(
             [Auth::user()->id],

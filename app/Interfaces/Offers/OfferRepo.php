@@ -14,6 +14,7 @@ use App\Models\Project;
 use App\Models\ProjectOffer;
 use App\Models\ProjectOffers;
 use App\Models\Notification as ModelsNotification;
+use Illuminate\Support\Facades\Auth;
 
 class OfferRepo implements OfferRepoInterface
 {
@@ -92,7 +93,8 @@ class OfferRepo implements OfferRepoInterface
         $notification = ModelsNotification::create([
             'title' => 'Offer Accepted',
             'body' => 'Offer for project ' . $offer->project->title . ' has been accepted',
-            'type' => 'Request'
+            'type' => 'Request',
+            'user_id' => Auth::user()->id
         ]);
         broadcast(new NotifyUser($offer->project->user, $notification))->toOthers();
         $this->notificationRepo->broadCastNotification([$offer->project->user], [
@@ -137,7 +139,8 @@ class OfferRepo implements OfferRepoInterface
         $notification = ModelsNotification::create([
             'title' => 'Offer Signed',
             'body' => 'Option ' . $option->option_name . "with Budget " . $option->cost . ' has been signed by Client',
-            'type' => 'Option Signed'
+            'type' => 'Option Signed',
+            'user_id' => Auth::user()->id
         ]);
         broadcast(new NotifyUser($option->contractor_id, $notification))->toOthers();
         return true;
