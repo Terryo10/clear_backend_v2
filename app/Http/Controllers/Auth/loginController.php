@@ -87,6 +87,27 @@ class loginController extends Controller
 
         return response()->json(['status' => 200, 'success' => true, "message" => "Reset password link sent to $email . Follow the link to reset your password and login again"]);
     }
+    public function addProject(Request $request)
+    {
+
+        $token = Str::random(64);
+
+        DB::table('vendor_project_submits')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+
+        // dd($token);
+
+        Mail::send('emails.forgotPassword', ['company' => $request->company_name, 'email' => $request->email], function ($message) use ($request) {
+            $message->to("nash@clearbuildingsolutions.com");
+            $message->subject('New Vendor Project Request');
+        });
+        $email = $request->input('email');
+
+        return response()->json(['status' => 200, 'success' => true, "message" => "Your Project Have been send to ADMIN"]);
+    }
     public function showResetPasswordForm($token)
     {
         return view('Auth/ResetPassword', ['token' => $token]);
@@ -125,8 +146,9 @@ class loginController extends Controller
         ]);
     }
 
-    public function refreshUser(){
-        $user =Auth::user();
+    public function refreshUser()
+    {
+        $user = Auth::user();
         $token = $user->createToken('apiToken')->plainTextToken;
         return response()->json([
             'status' => 200,
