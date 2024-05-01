@@ -116,8 +116,8 @@ class loginController extends Controller
         // dd($token);
 
         Mail::send('emails.vendors', ['company_name' => $request->company_name, 'email_address' => $request->email_address], function ($message) use ($request) {
-            // $message->to("nash@clearbuildingsolutions.com");
-            $message->to("pikigene01@gmail.com");
+            $message->to("nash@clearbuildingsolutions.com");
+            // $message->to("pikigene01@gmail.com");
             $message->subject('New Vendor Project Request');
         });
         $email = $request->input('email');
