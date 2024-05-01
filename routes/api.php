@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('Auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::resource('/sliders', SliderController::class);
 Route::post('/login', [loginController::class, 'login']);
 Route::post('/submit-vendor-project', [LoginController::class, 'addProject']);
 Route::post('/register', [RegisterController::class, 'register']);
@@ -100,7 +101,7 @@ Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
         Route::post('/update/{id}', [ProjectOfferController::class, 'update']);
     });
     Route::get('admin/project-search', [ProjectController::class, 'search']);
-    Route::resource('/sliders', SliderController::class);
+    // Route::resource('/sliders', SliderController::class);
     Route::get('admin-dashboard', [\App\Http\Controllers\DashboardController::class, 'admin'])->name('admin');
 
 
