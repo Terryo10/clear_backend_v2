@@ -93,15 +93,31 @@ class loginController extends Controller
         $token = Str::random(64);
 
         DB::table('vendor_project_submits')->insert([
-            'email' => $request->email,
-            'token' => $token,
+            'company_name' => $request->company_name,
+            'company_address' => $request->company_address,
+            'company_contact' => $request->company_contact,
+            'phone_number' => $request->phone_number,
+            'email_address' => $request->email_address,
+            'website' => $request->website,
+            'company_business_entity' => $request->company_business_entity,
+            'company_establishment_date' => $request->company_establishment_date,
+            'brief_description_of_your_company' => $request->brief_description_of_your_company,
+            'service_coverage_area' => $request->service_coverage_area,
+            'number_of_personnel_on_staff' => $request->number_of_personnel_on_staff,
+            'company_licences_certifications_or_awards' => $request->company_licences_certifications_or_awards,
+            'types_of_commercial_properties_currently_served' => $request->types_of_commercial_properties_currently_served,
+            'commercial_building_services_offered' => $request->commercial_building_services_offered,
+            'how_did_you_hear_about_us' => $request->how_did_you_hear_about_us,
+            'does_your_company_have_general_liability_insurance' => $request->does_your_company_have_general_liability_insurance,
+            'does_your_company_have_workers_compensation_insurance' => $request->does_your_company_have_workers_compensation_insurance,
             'created_at' => Carbon::now()
         ]);
 
         // dd($token);
 
-        Mail::send('emails.forgotPassword', ['company' => $request->company_name, 'email' => $request->email], function ($message) use ($request) {
-            $message->to("nash@clearbuildingsolutions.com");
+        Mail::send('emails.vendors', ['company_name' => $request->company_name, 'email_address' => $request->email_address], function ($message) use ($request) {
+            // $message->to("nash@clearbuildingsolutions.com");
+            $message->to("pikigene01@gmail.com");
             $message->subject('New Vendor Project Request');
         });
         $email = $request->input('email');
