@@ -18,6 +18,7 @@ class RegisterController extends Controller
 {
     public function register(Request $request)
     {
+        $fcm_token = "";
         $validator = Validator::make(
             $request->all(),
             [
@@ -36,15 +37,17 @@ class RegisterController extends Controller
             if ($user) {
                 return response()->json(['status' => 401, 'message' => 'Account is already registered']);
             } else {
-
+                if ($request->device_token) {
+                    $fcm_token = $request->device_token;
+                }
                 $input = array(
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
                     'email' => $request->email,
                     'password' => bcrypt($request->password),
-                    'role' => $request->role
+                    'role' => $request->role,
+                    "fcm_token" => $fcm_token
                 );
-
 
 
                 $user = User::create($input);

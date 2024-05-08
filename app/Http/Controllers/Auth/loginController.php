@@ -41,6 +41,9 @@ class loginController extends Controller
             return response()->json(['status' => 404, 'errors' => $validator->getMessageBag(), 'message' => 'validation error']);
         } else {
             $user = User::where('email', $request->email)->first();
+            if ($request->device_token) {
+                $user->update(["fcm_token" => $request->device_token]);
+            }
 
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
