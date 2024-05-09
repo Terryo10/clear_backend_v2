@@ -59,7 +59,7 @@ class MessageController extends Controller
             $file->move(public_path('/storage/chat/messages'), $randomString . $file->getClientOriginalName());
             $path = 'chat/messages/' . $randomString . $file->getClientOriginalName();
 
-            $data['attachement'] = $path;
+            $data['attachment'] = $path;
         }
         $data['user_id'] = auth()->user()->id;
         $message = $chat->messages()->create($data);
