@@ -99,12 +99,12 @@ class UserProfileController extends Controller
         ]);
         //check if old password is correct
         if (!Hash::check($request->old_password, $user->password)) {
-            return $this->jsonError(422, "Old Password is incorrect");
+            return $this->jsonError(422, "Old Password is incorrect", null, "error");
         }
 
         //check if new password is same as old password
         if (Hash::check($request->password, $user->password)) {
-            return $this->jsonError(422, "New Password cannot be same as old password");
+            return $this->jsonError(422, "New Password cannot be same as old password", null, "error");
         }
         $user->update([
             'password' => bcrypt($request->password),
@@ -121,7 +121,7 @@ class UserProfileController extends Controller
         ]);
         //check  if new email is same as old email
         if ($request->email == $user->email) {
-            return $this->jsonError(422, "New Email cannot be same as old email");
+            return $this->jsonError(422, "New Email cannot be same as old email", null, "error");
         }
 
         $user->update([
