@@ -17,6 +17,7 @@ use App\Http\Controllers\ManagerChatMessageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentInstructionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProjectHistoryController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\RequestProposalController;
 use App\Http\Controllers\User\KeyFactorController;
@@ -69,6 +70,11 @@ Route::prefix('auth')->group(function () {
     Route::post('/profile/picture', [UserProfileController::class, 'updateProfilePictureApi'])->middleware(['Auth:sanctum', 'verified']);
     Route::get('/email/verify/{id}', [VerificationController::class, 'emailVerify'])->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resendEmailVerification'])->middleware(['Auth:sanctum', 'throttle:6,1'])->name('verification.send');
+});
+
+//routes for project history
+Route::prefix('history')->group(function () {
+    Route::get('/', [ProjectHistoryController::class, 'getLatestHistory'])->middleware(['Auth:sanctum', 'verified']);
 });
 
 Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {

@@ -14,6 +14,8 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    protected $guarded;
+
     protected $with = ['profile'];
 
     /**
@@ -55,6 +57,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(UserProfile::class, 'user_id', 'id');
     }
-
-
+    public function project_history()
+    {
+        return $this->hasMany(ProjectHistory::class, 'user_id', 'id');
+    }
 }
