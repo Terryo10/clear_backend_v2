@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-
+use App\Http\Controllers\User\ProjectOfferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +25,4 @@ Route::get('/email/success', function () {
 
 Route::get('reset-password/{token}', [LoginController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('/reset-password', [LoginController::class, 'submitResetPasswordForm'])->name('update.password');
+Route::post('/offers/download', [ProjectOfferController::class, 'downloadOfferAsPdf']);
