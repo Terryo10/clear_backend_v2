@@ -25,4 +25,4 @@ Route::get('/email/success', function () {
 
 Route::get('reset-password/{token}', [LoginController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('/reset-password', [LoginController::class, 'submitResetPasswordForm'])->name('update.password');
-Route::post('/offers/download', [ProjectOfferController::class, 'downloadOfferAsPdf']);
+Route::get('/offers/download/{id}/{selected_option}', [ProjectOfferController::class, 'downloadOfferAsPdf']);

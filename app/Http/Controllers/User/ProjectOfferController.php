@@ -100,15 +100,15 @@ class ProjectOfferController extends Controller
     }
 
     //create function to download offer as pdf
-    public function downloadOfferAsPdf(ProjectOffers $offer, Request $request)
+    public function downloadOfferAsPdf(Request $request, $id, $selected_option)
     {
         $data = $request->validate([
             'id' => 'required',
             'selected_option' => 'required|numeric',
         ]);
 
-        $offer = ProjectOffers::find($request->id);
-        $option = OfferOptions::find($request->selected_option);
+        $offer = ProjectOffers::find($id);
+        $option = OfferOptions::find($selected_option);
 
         $data = [
             'title' => $offer->project->title,
