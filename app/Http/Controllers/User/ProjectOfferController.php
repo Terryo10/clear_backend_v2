@@ -10,7 +10,8 @@ use App\Interfaces\Offers\OfferRepoInterface;
 use App\Models\OfferOptions;
 use App\Models\Project;
 use App\Models\ProjectOffers;
-use Barryvdh\DomPDF\PDF;
+// use Barryvdh\DomPDF\PDF;
+// use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 
 class ProjectOfferController extends Controller
@@ -125,8 +126,8 @@ class ProjectOfferController extends Controller
 
 
 
-        $pdf = PDF::loadView('offer', $data);
-        return $pdf->download($offer->project->title ?? "" . $option->option_name ?? "" . '.pdf');
+        $pdf = \PDF::loadView('offer', $data);
+        return $pdf->download($offer->project->title . $option->option_name . '.pdf');
     }
 
     public function filter(Request $request)
