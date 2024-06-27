@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\loginController;
 use App\Http\Controllers\User\ProjectOfferController;
 
 /*
@@ -23,6 +23,6 @@ Route::get('/email/success', function () {
     return view('email.verificationSuccess');
 })->name('email.success');
 
-Route::get('reset-password/{token}', [LoginController::class, 'showResetPasswordForm'])->name('reset.password.get');
-Route::post('/reset-password', [LoginController::class, 'submitResetPasswordForm'])->name('update.password');
+Route::get('reset-password/{token}', [loginController::class, 'showResetPasswordForm'])->name('reset.password.get');
+Route::post('/reset-password', [loginController::class, 'submitResetPasswordForm'])->name('update.password');
 Route::get('/offers/download/{id}/{selected_option}', [ProjectOfferController::class, 'downloadOfferAsPdf']);
