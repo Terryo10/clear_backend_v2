@@ -42,7 +42,6 @@ class ProjectOfferController extends Controller
         ]);
         $this->offerRepo->update($offerData, $request->options);
         return $this->jsonSuccess(200, "Offer Updated", null, "offer");
-
     }
 
     //create function to delete offer
@@ -96,16 +95,15 @@ class ProjectOfferController extends Controller
 
         $this->offerRepo->sign($request->id, $data);
         return $this->jsonSuccess(200, "Signed Off", null, "offer");
-
     }
 
     //create function to download offer as pdf
     public function downloadOfferAsPdf(Request $request, $id, $selected_option)
     {
-        $data = $request->validate([
-            'id' => 'required',
-            'selected_option' => 'required|numeric',
-        ]);
+        // $data = $request->validate([
+        //     'id' => 'required',
+        //     'selected_option' => 'required|numeric',
+        // ]);
 
         $offer = ProjectOffers::find($id);
         $option = OfferOptions::find($selected_option);
@@ -114,21 +112,21 @@ class ProjectOfferController extends Controller
             'title' => $offer->project->title,
             'service' => $offer->project->service->name,
             'status' => $offer->project->status,
-            'option' => $option->option_name,
-            'cost' => $option->cost,
-            'start_date' => $option->start_date,
-            'end_date' => $option->end_date,
-            'contactor_name' => $option->contractor ? $option->contractor->first_name . " " . $option->contractor->last_name : "N/A",
-            'contract_terms_conditions' => $option->contract_terms_conditions,
-            'execution_plan' => $option->execution_plan,
-            'scope_of_work' => $option->scope_of_work,
-            'site_info' => $option->site_info,
+            'option' => $option->option_name ?? "",
+            'cost' => $option->cost ?? "0",
+            'start_date' => $option->start_date ?? "",
+            'end_date' => $option->end_date ?? "",
+            'contactor_name' => $option->contractor ?? null ? $option->contractor->first_name . " " . $option->contractor->last_name : "N/A",
+            'contract_terms_conditions' => $option->contract_terms_conditions ?? "",
+            'execution_plan' => $option->execution_plan ?? "",
+            'scope_of_work' => $option->scope_of_work ?? "",
+            'site_info' => $option->site_info ?? "",
         ];
 
 
 
         $pdf = PDF::loadView('offer', $data);
-        return $pdf->download($offer->project->title . $option->option_name . '.pdf');
+        return $pdf->download($offer->project->title ?? "" . $option->option_name ?? "" . '.pdf');
     }
 
     public function filter(Request $request)
