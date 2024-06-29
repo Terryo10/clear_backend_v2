@@ -64,7 +64,7 @@
 
         <form method="POST" action="{{ url('/reset-password')}}">
         @csrf
-        <input type="hidden" name="email_token" value="{{ $token }}" />
+        {{-- <input type="hidden" name="email_token" value="{{ $token }}" /> --}}
             <div class="form-group">
                 <label for="exampleInputEmail1">Password</label>
                 <input type="password" class="form-control" id="exampleInputEmail1" required name="password" aria-describedby="emailHelp" placeholder="Enter password">
