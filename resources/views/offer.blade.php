@@ -103,11 +103,11 @@
 
         <div class="list">
             <ul>
-                <li>Project Title : {{$title}}</li>
-                <li>Project Rate : {{$cost}}</li>
-                <li>Service Type: {{$service}}</li>
-                <li>Project Location: Project location goes here</li>
-                <li>Project Timeline: {{ $start_date }}-{{$end_date}}</li>
+                <li>Project Title : {{ $title }}</li>
+                <li>Project Rate : {{ $cost }}</li>
+                <li>Service Type: {{ $service }}</li>
+                <li>Project Location: {{ $location }}</li>
+                <li>Project Timeline: {{ $start_date }}-{{ $end_date }}</li>
             </ul>
         </div>
         <div class="site-data">

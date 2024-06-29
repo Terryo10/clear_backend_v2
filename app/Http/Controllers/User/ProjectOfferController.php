@@ -110,18 +110,19 @@ class ProjectOfferController extends Controller
         $option = OfferOptions::find($selected_option);
 
         $data = [
-            'title' => $offer->project->title,
-            'service' => $offer->project->service->name,
-            'status' => $offer->project->status,
-            'option' => $option->option_name ?? "",
+            'title' => $offer->project->title ?? "N/A",
+            'location' => $offer->project->location ?? "N/A",
+            'service' => $offer->project->service->name ?? "N/A",
+            'status' => $offer->project->status ?? "N/A",
+            'option' => $option->option_name ?? "N/A",
             'cost' => $option->cost ?? "0",
-            'start_date' => $option->start_date ?? "",
-            'end_date' => $option->end_date ?? "",
+            'start_date' => $option->start_date ?? "N/A",
+            'end_date' => $option->end_date ?? "N/A",
             'contactor_name' => $option->contractor ?? null ? $option->contractor->first_name . " " . $option->contractor->last_name : "N/A",
-            'contract_terms_conditions' => $option->contract_terms_conditions ?? "",
-            'execution_plan' => $option->execution_plan ?? "",
-            'scope_of_work' => $option->scope_of_work ?? "",
-            'site_info' => $option->site_info ?? "",
+            'contract_terms_conditions' => $option->contract_terms_conditions ?? "N/A",
+            'execution_plan' => $option->execution_plan ?? "N/A",
+            'scope_of_work' => $option->scope_of_work ?? "N/A",
+            'site_info' => $option->site_info ?? "N/A",
         ];
 
 
