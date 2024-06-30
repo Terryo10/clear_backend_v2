@@ -368,7 +368,7 @@ class ProjectController extends Controller
 
     public function getRequests()
     {
-        $requests = Project::latest()->paginate(20);
+        $requests = Project::orderBy('created_at', 'desc')->paginate(20);
         return $this->jsonSuccess(200, 'Request Successful', $requests, 'requests');
         return ProjectResource::collection($requests);
     }
