@@ -18,7 +18,8 @@ class NotificationsController extends Controller
     public function deleteNotification(Request $request)
     {
         $notification = Notification::where('id', $request->id)->delete();
+        $notifications = Notification::where('user_id', Auth::user()->id)->paginate(20);
 
-        return $this->jsonSuccess(200, 'Request Successful', $notification, 'notification');
+        return $this->jsonSuccess(200, 'Request Successful', $notifications, 'notification');
     }
 }
