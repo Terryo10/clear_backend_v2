@@ -170,6 +170,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
     Route::post('upload-images', [ProjectImagesController::class, 'uploadImagesFromAdmin']);
     Route::post('/sign-offer/{id}', [ProjectOfferController::class, 'sign']);
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
+    Route::post('notifications/delete', [NotificationsController::class, 'deleteNotification']);
     Route::post('project-rating', [ProjectController::class, 'rate']);
     Route::get('user-dashboard', [\App\Http\Controllers\DashboardController::class, 'user'])->name('user');
     Route::post('user-profile', [ProfileController::class, 'update']);

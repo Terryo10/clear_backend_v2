@@ -15,4 +15,10 @@ class NotificationsController extends Controller
 
         return $this->jsonSuccess(200, 'Request Successful', $notifications, 'notifications');
     }
+    public function deleteNotification(Request $request)
+    {
+        $notification = Notification::where('id', $request->id)->delete();
+
+        return $this->jsonSuccess(200, 'Request Successful', $notification, 'notification');
+    }
 }
