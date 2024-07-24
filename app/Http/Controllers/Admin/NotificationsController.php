@@ -20,6 +20,6 @@ class NotificationsController extends Controller
         $notification = Notification::where('id', $request->id)->delete();
         $notifications = Notification::where('user_id', Auth::user()->id)->paginate(20);
 
-        return $this->jsonSuccess(200, 'Request Successful', $notifications, 'notification');
+        return $this->jsonSuccess(200, 'Request Successful', $notifications, 'notifications');
     }
 }
