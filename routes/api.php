@@ -77,7 +77,7 @@ Route::prefix('history')->group(function () {
     Route::get('/', [ProjectHistoryController::class, 'getLatestHistory'])->middleware(['Auth:sanctum', 'verified']);
 });
 
-Route::middleware(['Auth:sanctum', AdminMiddleware::class])->group(function () {
+Route::middleware(['Auth:sanctum', 'cors', AdminMiddleware::class])->group(function () {
     //admin-only routes here
     Route::post('admin/payment-status', [ProjectController::class, 'changePaymentStatus']);
     Route::post('admin/add-payment-link', [ProjectController::class, 'setPaymentLink']);
@@ -148,7 +148,7 @@ Route::get('messages/{chat}', [ChatController::class, 'getChatMessages'])->middl
 Route::get('messages-manager/{chat}', [ChatController::class, 'getManagerChatMessages'])->middleware('Auth:sanctum');
 
 //USER
-Route::middleware(['Auth:sanctum'])->group(function () {
+Route::middleware(['Auth:sanctum', 'cors'])->group(function () {
     Route::get('refresh-user', [LoginController::class, 'refreshUser']);
     Route::post('delete-project-file/{id}', [ProjectImagesController::class, 'deleteProjectFile']);
     Route::get('paymentInstructions', [PaymentInstructionController::class, 'index']);
@@ -194,7 +194,7 @@ Route::middleware(['Auth:sanctum'])->group(function () {
 
 //Contractor
 
-Route::middleware(['Auth:sanctum', ContractorMiddleware::class])->group(function () {
+Route::middleware(['Auth:sanctum', 'cors', ContractorMiddleware::class])->group(function () {
     Route::post('contractor/sent-proposal-to-user', [ProjectController::class, 'sendProposal']);
     Route::get('contractor/project/{id}', [ContractorProjectController::class, 'contactorProject']);
     Route::get('contractor/projects', [ContractorProjectController::class, 'contactorProjects']);
