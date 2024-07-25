@@ -64,30 +64,81 @@ class DashboardController extends Controller
 
     public function user()
     {
-        $requests = Project::where('status', '!=', 'project_in_progress')->where('user_id', auth()->user()->id)->count();
+        $user_id = auth()->user()->id;
 
-        $requestsForMonth = Project::where('status', '!=', 'project_in_progress')->where('user_id', auth()->user()->id)->whereMonth('created_at', date('m'))->count();
-        $requetsForday = Project::where('status', '!=', 'project_in_progress')->where('user_id', auth()->user()->id)->whereDay('created_at', date('d'))->count();
+        $requests = Project::where('status', '!=', 'project_in_progress')
+            ->where('user_id', $user_id)
+            ->count();
 
-        $chatRequests = ManagerChat::where('accepted', false)->get();
-        $managerChats = ManagerChat::where('accepted', true)->where('manager_id', auth()->user()->id)->get();
 
-        $projects = Project::where('status', 'project_in_progress')->orWhere('status', 'project_completed')->where('user_id', auth()->user()->id)->count();
 
-        //get total cosst projects for that month
-        $projectMonthTotalCost = Project::where('status', 'project_in_progress')->orWhere('status', 'project_completed')->where('user_id', auth()->user()->id)->whereMonth('created_at', date('m'))->sum('budget');
-        $projectDayTotalCost = Project::where('status', 'project_in_progress')->orWhere('status', 'project_completed')->where('user_id', auth()->user()->id)->whereMonth('created_at', date('d'))->sum('budget');
 
-        $projectTotalCost = Project::where('status', 'project_in_progress')->orWhere('status', 'project_completed')->where('user_id', auth()->user()->id)->whereHas('transaction', function ($query) {
-            $query->where('status', 'paid');
-        })->sum('budget');
-        $projectGroupByMonth = Project::where('user_id', auth()->user()->id)->selectRaw('sum(budget) as total, MONTH(created_at) as month')->groupBy('month')->get();
-        $lastRequests = Project::where('user_id', auth()->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+        $requestsForMonth = Project::where('status', '!=', 'project_in_progress')
+            ->where('user_id', $user_id)
+            ->whereMonth('created_at', date('m'))
+            ->count();
+
+        $requestsForDay = Project::where('status', '!=', 'project_in_progress')
+            ->where('user_id', $user_id)
+            ->whereDay('created_at', date('d'))
+            ->count();
+
+        $projects = Project::where(function ($query) use ($user_id) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('user_id', $user_id)
+            ->count();
+
+
+
+        $projectMonthTotalCost = Project::where(function ($query) use ($user_id) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('user_id', $user_id)
+            ->whereMonth('created_at', date('m'))
+            ->sum('budget');
+
+        $projectDayTotalCost = Project::where(function ($query) use ($user_id) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('user_id', $user_id)
+            ->whereDay('created_at', date('d'))
+            ->sum('budget');
+
+        $projectTotalCost = Project::where(function ($query) use ($user_id) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('user_id', $user_id)
+            ->whereHas('transaction', function ($query) {
+                $query->where('status', 'paid');
+            })
+            ->sum('budget');
+
+        $projectGroupByMonth = Project::where('user_id', $user_id)
+            // ->selectRaw('sum(budget) as total, MONTH(created_at) as month')
+            // ->groupBy('month')
+            ->get();
+
+        $lastRequests = Project::where('user_id', $user_id)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $chatRequests = ManagerChat::where('accepted', false)
+            ->get();
+
+        $managerChats = ManagerChat::where('accepted', true)
+            ->where('manager_id', $user_id)
+            ->get();
 
         return $this->jsonSuccess(200, "Dashboard Data Retrieved", [
             'requests' => $requests,
             'requestsForMonth' => $requestsForMonth,
-            'requestsForDay' => $requetsForday,
+            'requestsForDay' => $requestsForDay,
             'chatRequests' => $chatRequests,
             'managerChats' => $managerChats,
             'projects' => $projects,
@@ -97,64 +148,65 @@ class DashboardController extends Controller
             'projectGroupByMonth' => $projectGroupByMonth,
             'lastRequests' => $lastRequests
         ], "dashboard");
-
     }
 
     public function contractor()
     {
-            $requests = RequestProposal::where('contractor_id', auth()->user()->id)->count();
+        $requests = RequestProposal::where('contractor_id', auth()->user()->id)->count();
 
-            $requestsForMonth = RequestProposal::where('contractor_id', auth()->user()->id)->whereMonth('created_at', date('m'))->count();
-            $requestsForDay = RequestProposal::where('contractor_id', auth()->user()->id)->whereDay('created_at', date('d'))->count();
+        $requestsForMonth = RequestProposal::where('contractor_id', auth()->user()->id)->whereMonth('created_at', date('m'))->count();
+        $requestsForDay = RequestProposal::where('contractor_id', auth()->user()->id)->whereDay('created_at', date('d'))->count();
 
-            $chatRequests = ManagerChat::where('accepted', false)->get();
-            $managerChats = ManagerChat::where('accepted', true)->where('manager_id', auth()->user()->id)->get();
+        $chatRequests = ManagerChat::where('accepted', false)->get();
+        $managerChats = ManagerChat::where('accepted', true)->where('manager_id', auth()->user()->id)->get();
 
-            $projects = Project::where(function ($query) {
-                $query->where('status', 'project_in_progress')
-                    ->orWhere('status', 'project_completed');
-            })
-                ->where('contractor_id', auth()->user()->id)
-                ->count();
+        $projects = Project::where(function ($query) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('contractor_id', auth()->user()->id)
+            ->count();
 
-            $projectMonthTotalCost = Project::where(function ($query) {
-                $query->where('status', 'project_in_progress')
-                    ->orWhere('status', 'project_completed');
-            })
-                ->where('contractor_id', auth()->user()->id)
-                ->whereMonth('created_at', date('m'))->sum('budget');
-            $projectDayTotalCost = Project::where(function ($query) {
-                $query->where('status', 'project_in_progress')
-                    ->orWhere('status', 'project_completed');
-            })
-                ->where('contractor_id', auth()->user()->id)
-                ->whereMonth('created_at', date('d'))->sum('budget');
-            $projectTotalCost = Project::where(function ($query) {
-                $query->where('status', 'project_in_progress')
-                    ->orWhere('status', 'project_completed');
-            })
-                ->where('contractor_id', auth()->user()->id)
-                ->whereHas('transaction', function ($query) {
-                    $query->where('status', 'paid');
-                })->sum('budget');
-            //get total cosst projects for that month
+        $projectMonthTotalCost = Project::where(function ($query) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('contractor_id', auth()->user()->id)
+            ->whereMonth('created_at', date('m'))->sum('budget');
+        $projectDayTotalCost = Project::where(function ($query) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('contractor_id', auth()->user()->id)
+            ->whereMonth('created_at', date('d'))->sum('budget');
+        $projectTotalCost = Project::where(function ($query) {
+            $query->where('status', 'project_in_progress')
+                ->orWhere('status', 'project_completed');
+        })
+            ->where('contractor_id', auth()->user()->id)
+            ->whereHas('transaction', function ($query) {
+                $query->where('status', 'paid');
+            })->sum('budget');
+        //get total cosst projects for that month
 
-            $projectGroupByMonth = Project::where('contractor_id', auth()->user()->id)->selectRaw('sum(budget) as total, MONTH(created_at) as month')->groupBy('month')->get();
-            $lastRequests = Project::where('contractor_id', auth()->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+        $projectGroupByMonth = Project::where('contractor_id', auth()->user()->id)
+        // ->selectRaw('sum(budget) as total, MONTH(created_at) as month')
+        // ->groupBy('month')
+        ->get();
+        $lastRequests = Project::where('contractor_id', auth()->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
 
-           return $this->jsonSuccess(200, "Dashboard Data Retrieved", [
-                'requests' => $requests,
-                'requestsForMonth' => $requestsForMonth,
-                'requestsForDay' => $requestsForDay,
-                'chatRequests' => $chatRequests,
-                'managerChats' => $managerChats,
-                'projects' => $projects,
-                'projectMonthTotalCost' => $projectMonthTotalCost,
-                'projectDayTotalCost' => $projectDayTotalCost,
-                'projectTotalCost' => $projectTotalCost,
-                'projectGroupByMonth' => $projectGroupByMonth,
-                'lastRequests' => $lastRequests
-            ], "dashboard");
-
+        return $this->jsonSuccess(200, "Dashboard Data Retrieved", [
+            'requests' => $requests,
+            'requestsForMonth' => $requestsForMonth,
+            'requestsForDay' => $requestsForDay,
+            'chatRequests' => $chatRequests,
+            'managerChats' => $managerChats,
+            'projects' => $projects,
+            'projectMonthTotalCost' => $projectMonthTotalCost,
+            'projectDayTotalCost' => $projectDayTotalCost,
+            'projectTotalCost' => $projectTotalCost,
+            'projectGroupByMonth' => $projectGroupByMonth,
+            'lastRequests' => $lastRequests
+        ], "dashboard");
     }
 }
